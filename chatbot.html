@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>StudEase — AI Tutors</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:      #080c1a;
+  --bg2:     #0e1326;
+  --bg3:     #111827;
+  --surface: #131829;
+  --surf2:   #1a2038;
+  --surf3:   #1e2545;
+  --border:  rgba(255,255,255,0.07);
+  --bord2:   rgba(255,255,255,0.12);
+  --text:    #e8edf8;
+  --text2:   #7a88aa;
+  --text3:   #c5cde8;
+  --radius:  14px;
+  --rsm:     9px;
+  --rxl:     20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+/* BG */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 55% 40% at 5% 15%,rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),0.14) 0%,transparent 60%),
+  radial-gradient(ellipse 45% 35% at 92% 85%,rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),0.08) 0%,transparent 55%);
+  transition:background 0.8s ease}
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,0.025) 1px,transparent 1px);
+  background-size:28px 28px}
+
+/* LAYOUT */
+.app{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh}
+
+/* NAVBAR */
+.navbar{display:flex;align-items:center;gap:14px;padding:0 24px;height:54px;
+  background:rgba(8,12,26,0.85);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);flex-shrink:0}
+.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-logo{width:30px;height:30px;background:linear-gradient(135deg,#f4a623,#ff6b9d);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 0 12px rgba(244,166,35,.3)}
+.nav-name{font-family:'Nunito',sans-serif;font-weight:900;font-size:17px}
+.nav-name span{color:#f4a623}
+.nav-sep{width:1px;height:20px;background:var(--border);margin:0 4px}
+.nav-page{font-size:12px;font-weight:600;color:var(--text2)}
+.nav-r{margin-left:auto;display:flex;align-items:center;gap:8px}
+.nav-btn{width:32px;height:32px;border-radius:8px;background:var(--surface);border:1px solid var(--border);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s}
+.nav-btn:hover{background:var(--surf2);border-color:var(--bord2)}
+.nav-av{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#3a7bd5,#8b5cf6);
+  display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer}
+
+/* MAIN AREA */
+.main{display:flex;flex:1;overflow:hidden}
+
+/* ── CHARACTER SELECTOR PANEL ── */
+.char-panel{width:280px;background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.cp-header{padding:16px 16px 10px;border-bottom:1px solid var(--border);flex-shrink:0}
+.cp-title{font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;margin-bottom:2px}
+.cp-sub{font-size:11px;color:var(--text2)}
+.cp-list{flex:1;overflow-y:auto;padding:10px}
+.cp-list::-webkit-scrollbar{width:3px}
+.cp-list::-webkit-scrollbar-thumb{background:var(--surf2);border-radius:99px}
+
+.char-card{
+  border-radius:var(--radius);border:2px solid var(--border);
+  cursor:pointer;transition:all .22s;margin-bottom:8px;overflow:hidden;
+  background:var(--surface);position:relative;
+}
+.char-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.char-card.active{border-color:var(--char-color,#3a7bd5);box-shadow:0 0 0 1px var(--char-color,#3a7bd5),0 8px 28px rgba(0,0,0,.35)}
+.char-card-inner{display:flex;align-items:center;gap:12px;padding:12px}
+.char-emoji-wrap{
+  width:52px;height:52px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  border:3px solid rgba(255,255,255,.1);position:relative;
+  transition:transform .2s;
+}
+.char-card:hover .char-emoji-wrap{transform:scale(1.08)}
+.char-card.active .char-emoji-wrap{border-color:var(--char-color,#3a7bd5)}
+.char-online{position:absolute;bottom:2px;right:2px;width:10px;height:10px;
+  background:#00d4aa;border-radius:50%;border:2px solid var(--surface);
+  animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,212,170,.4)}50%{box-shadow:0 0 0 5px rgba(0,212,170,0)}}
+.char-info{flex:1;min-width:0}
+.char-name{font-family:'Nunito',sans-serif;font-weight:900;font-size:14px;margin-bottom:2px}
+.char-subj{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;display:inline-block;margin-bottom:4px}
+.char-tagline{font-size:11px;color:var(--text2);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.char-active-badge{
+  position:absolute;top:8px;right:8px;
+  font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  padding:2px 7px;border-radius:99px;
+  background:var(--char-color,#3a7bd5);color:#fff;opacity:0;transition:opacity .2s
+}
+.char-card.active .char-active-badge{opacity:1}
+
+/* Stats strip */
+.char-stats{display:flex;gap:0;border-top:1px solid var(--border)}
+.cs-stat{flex:1;padding:7px 4px;text-align:center;border-right:1px solid var(--border)}
+.cs-stat:last-child{border-right:none}
+.cs-val{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px}
+.cs-lbl{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
+
+/* ── CHAT AREA ── */
+.chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* Tutor header */
+.tutor-header{
+  padding:14px 20px;border-bottom:1px solid var(--border);
+  background:rgba(8,12,26,.6);backdrop-filter:blur(10px);
+  display:flex;align-items:center;gap:14px;flex-shrink:0;
+  transition:all .4s ease
+}
+.th-av{
+  width:46px;height:46px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  border:3px solid rgba(255,255,255,.1);
+  box-shadow:0 0 20px rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),.35);
+  transition:all .4s ease;animation:tutorGlow 3s ease-in-out infinite
+}
+@keyframes tutorGlow{
+  0%,100%{box-shadow:0 0 20px rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),.35)}
+  50%{box-shadow:0 0 32px rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),.55)}
+}
+.th-info{flex:1}
+.th-name{font-family:'Nunito',sans-serif;font-weight:900;font-size:17px}
+.th-sub{font-size:12px;color:var(--text2);margin-top:2px;display:flex;align-items:center;gap:6px}
+.th-dot{width:7px;height:7px;border-radius:50%;background:#00d4aa;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.th-mood{
+  padding:6px 14px;border-radius:99px;font-size:12px;font-weight:700;
+  border:1.5px solid var(--char-color,#3a7bd5);
+  color:var(--char-color,#3a7bd5);background:rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),.1);
+  transition:all .4s ease
+}
+.th-actions{display:flex;gap:6px}
+.th-btn{width:34px;height:34px;border-radius:9px;background:var(--surface);border:1px solid var(--border);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s}
+.th-btn:hover{background:var(--surf2);border-color:var(--bord2)}
+
+/* Quick topic chips */
+.topic-strip{padding:10px 20px;border-bottom:1px solid var(--border);display:flex;gap:7px;overflow-x:auto;flex-shrink:0}
+.topic-strip::-webkit-scrollbar{display:none}
+.topic-chip{
+  padding:5px 13px;border-radius:99px;font-size:11px;font-weight:700;
+  background:var(--surface);border:1.5px solid var(--border);
+  color:var(--text2);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .18s
+}
+.topic-chip:hover{border-color:var(--char-color,#3a7bd5);color:var(--char-color,#3a7bd5);background:rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),.08)}
+
+/* Messages */
+.messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px}
+.messages::-webkit-scrollbar{width:4px}
+.messages::-webkit-scrollbar-thumb{background:var(--surf2);border-radius:99px}
+
+/* Welcome card */
+.welcome-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--rxl);
+  padding:24px;text-align:center;margin:auto;max-width:400px;
+  animation:fadeUp .5s ease
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.wc-avatar{
+  width:72px;height:72px;border-radius:50%;margin:0 auto 12px;
+  display:flex;align-items:center;justify-content:center;font-size:36px;
+  border:3px solid var(--char-color,#3a7bd5);
+  box-shadow:0 0 28px rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),.4)
+}
+.wc-name{font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;margin-bottom:4px}
+.wc-sub{font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5}
+.wc-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.wc-chip{
+  padding:6px 14px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
+  background:rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),.1);
+  border:1.5px solid rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),.3);
+  color:var(--char-color,#3a7bd5);transition:all .18s
+}
+.wc-chip:hover{background:rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),.2)}
+
+/* Message bubbles */
+.msg{display:flex;gap:10px;animation:msgIn .3s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.msg.user{flex-direction:row-reverse}
+.msg-av{width:34px;height:34px;border-radius:50%;flex-shrink:0;align-self:flex-end;
+  display:flex;align-items:center;justify-content:center;font-size:16px}
+.msg-av.tutor-av{border:2px solid var(--char-color,#3a7bd5);box-shadow:0 0 12px rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),.25)}
+.msg-av.user-av{background:linear-gradient(135deg,#3a7bd5,#8b5cf6);border:2px solid rgba(58,123,213,.3)}
+.msg-body{max-width:72%}
+.msg-bubble{
+  padding:12px 16px;border-radius:16px;font-size:14px;line-height:1.65;
+}
+.msg.tutor .msg-bubble{
+  background:var(--surface);border:1px solid var(--border);
+  border-bottom-left-radius:4px;color:var(--text3)
+}
+.msg.user .msg-bubble{
+  background:linear-gradient(135deg,var(--char-color,#3a7bd5),rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),.7));
+  color:#fff;border-bottom-right-radius:4px
+}
+.msg-bubble code{background:rgba(0,0,0,.3);padding:2px 7px;border-radius:5px;font-size:12px;font-family:monospace}
+.msg-bubble .math-block{
+  background:rgba(0,0,0,.25);border-left:3px solid var(--char-color,#3a7bd5);
+  border-radius:0 8px 8px 0;padding:8px 12px;margin:8px 0;font-family:monospace;font-size:13px
+}
+.msg-bubble strong{color:#fff}
+.msg.tutor .msg-bubble strong{color:var(--text)}
+.msg-time{font-size:10px;color:var(--text2);margin-top:4px;padding:0 4px}
+.msg.user .msg-time{text-align:right}
+.msg-actions{display:flex;gap:4px;margin-top:5px;opacity:0;transition:opacity .2s}
+.msg:hover .msg-actions{opacity:1}
+.msg-act{padding:3px 9px;border-radius:99px;font-size:10px;font-weight:600;
+  background:var(--surf2);border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all .18s}
+.msg-act:hover{color:var(--text);border-color:var(--bord2)}
+
+/* Typing indicator */
+.typing-wrap{display:flex;gap:10px;align-items:flex-end}
+.typing-bubble{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;border-bottom-left-radius:4px;
+  padding:14px 18px;display:flex;gap:5px;align-items:center
+}
+.td{width:8px;height:8px;border-radius:50%;background:var(--char-color,#3a7bd5);
+  animation:tdBounce 1.2s infinite}
+.td:nth-child(2){animation-delay:.15s}
+.td:nth-child(3){animation-delay:.3s}
+@keyframes tdBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-7px)}}
+
+/* XP pop */
+.xp-pop{
+  display:flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,rgba(244,166,35,.12),rgba(0,212,170,.08));
+  border:1px solid rgba(244,166,35,.22);border-radius:var(--rsm);
+  padding:8px 14px;font-size:12px;margin:0 auto;
+  animation:fadeUp .4s cubic-bezier(.34,1.56,.64,1)
+}
+.xp-pop-icon{font-size:16px}
+.xp-pop strong{color:#f4a623}
+
+/* Input area */
+.input-area{padding:14px 20px 18px;border-top:1px solid var(--border);
+  background:rgba(8,12,26,.8);backdrop-filter:blur(10px);flex-shrink:0}
+.quick-replies{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.qr-chip{
+  padding:5px 12px;border-radius:99px;font-size:11px;font-weight:600;cursor:pointer;
+  background:var(--surface);border:1.5px solid var(--border);color:var(--text2);
+  white-space:nowrap;transition:all .18s
+}
+.qr-chip:hover{border-color:var(--char-color,#3a7bd5);color:var(--char-color,#3a7bd5);background:rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),.08)}
+.input-row{display:flex;gap:8px;align-items:flex-end}
+.input-box{
+  flex:1;background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius);padding:12px 16px;
+  font-family:'Outfit',sans-serif;font-size:14px;color:var(--text);
+  resize:none;min-height:48px;max-height:130px;outline:none;line-height:1.5;
+  transition:border-color .2s,box-shadow .2s
+}
+.input-box:focus{border-color:var(--char-color,#3a7bd5);box-shadow:0 0 0 3px rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),.1)}
+.input-box::placeholder{color:var(--text2)}
+.btn-send{
+  width:48px;height:48px;border-radius:14px;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:19px;
+  transition:all .2s;flex-shrink:0
+}
+.btn-mic{width:48px;height:48px;border-radius:14px;background:var(--surface);border:1.5px solid var(--border);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;
+  flex-shrink:0;transition:all .2s}
+.btn-mic:hover{border-color:#00d4aa;background:rgba(0,212,170,.08)}
+.btn-send-inner{
+  background:linear-gradient(135deg,var(--char-color,#3a7bd5),rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),.7));
+  width:100%;height:100%;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),.4);
+  transition:all .3s ease
+}
+.btn-send:hover .btn-send-inner{transform:scale(1.05);box-shadow:0 6px 22px rgba(var(--char-r,58),var(--char-g,123),var(--char-b,213),.5)}
+
+/* ── CHARACTER SELECTION OVERLAY ── */
+.char-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,.85);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  animation:fadeIn .3s ease
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.char-overlay.hidden{display:none}
+.char-picker{
+  background:var(--bg2);border:1px solid var(--bord2);
+  border-radius:var(--rxl);padding:32px;max-width:780px;width:90%;
+  max-height:90vh;overflow-y:auto;
+  box-shadow:0 24px 80px rgba(0,0,0,.6);
+  animation:popUp .4s cubic-bezier(.34,1.56,.64,1)
+}
+@keyframes popUp{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+.cp-ov-title{font-family:'Nunito',sans-serif;font-weight:900;font-size:26px;text-align:center;margin-bottom:6px}
+.cp-ov-sub{font-size:14px;color:var(--text2);text-align:center;margin-bottom:28px}
+.cp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.cp-card{
+  background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);
+  padding:20px 16px;text-align:center;cursor:pointer;
+  transition:all .25s;position:relative;overflow:hidden
+}
+.cp-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;
+  background:linear-gradient(135deg,rgba(var(--cr,58),var(--cg,123),var(--cb,213),.08),transparent)}
+.cp-card:hover::before{opacity:1}
+.cp-card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(0,0,0,.4);border-color:var(--char-col)}
+.cp-card-emoji{
+  width:70px;height:70px;border-radius:50%;margin:0 auto 12px;
+  display:flex;align-items:center;justify-content:center;font-size:34px;
+  border:3px solid rgba(var(--cr,58),var(--cg,123),var(--cb,213),.35);
+  background:rgba(var(--cr,58),var(--cg,123),var(--cb,213),.1);
+  transition:transform .25s;
+}
+.cp-card:hover .cp-card-emoji{transform:scale(1.1) rotate(-3deg)}
+.cp-card-name{font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;margin-bottom:3px}
+.cp-card-subj{font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;display:inline-block;margin-bottom:8px}
+.cp-card-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.cp-card-traits{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:8px}
+.cp-trait{font-size:10px;background:var(--surf2);border:1px solid var(--border);
+  color:var(--text2);padding:2px 8px;border-radius:99px}
+
+/* Responsive */
+@media(max-width:900px){.char-panel{width:0;overflow:hidden}.char-panel.open{width:260px}}
+@media(max-width:640px){.topic-strip{display:none}.th-mood{display:none}.cp-grid{grid-template-columns:1fr 1fr}.char-picker{padding:20px}}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<!-- Character selection overlay (shown on first load) -->
+<div class="char-overlay" id="charOverlay">
+  <div class="char-picker">
+    <div class="cp-ov-title">Choose Your AI Tutor ✨</div>
+    <div class="cp-ov-sub">Each tutor has a unique personality and teaching style — pick who you want to learn with!</div>
+    <div class="cp-grid" id="cpGrid"></div>
+  </div>
+</div>
+
+<div class="app">
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="#" class="nav-brand">
+      <div class="nav-logo">🎓</div>
+      <div class="nav-name">Stud<span>Ease</span></div>
+    </a>
+    <div class="nav-sep"></div>
+    <span class="nav-page">AI Tutors</span>
+    <div class="nav-r">
+      <div class="nav-btn" title="Switch Tutor" onclick="openOverlay()">🔄</div>
+      <div class="nav-btn" title="Clear Chat" onclick="clearChat()">🗑️</div>
+      <div class="nav-btn" title="Back to Community">👥</div>
+      <div class="nav-av">😊</div>
+    </div>
+  </nav>
+
+  <div class="main">
+    <!-- Character panel (sidebar) -->
+    <aside class="char-panel" id="charPanel">
+      <div class="cp-header">
+        <div class="cp-title">Your Tutors</div>
+        <div class="cp-sub">Tap to switch anytime</div>
+      </div>
+      <div class="cp-list" id="cpList"></div>
+    </aside>
+
+    <!-- Chat area -->
+    <div class="chat-area">
+      <!-- Tutor header -->
+      <div class="tutor-header" id="tutorHeader">
+        <div class="th-av" id="thAv">🤖</div>
+        <div class="th-info">
+          <div class="th-name" id="thName">Select a Tutor</div>
+          <div class="th-sub"><span class="th-dot"></span> <span id="thStatus">Ready to help</span></div>
+        </div>
+        <div class="th-mood" id="thMood">Friendly</div>
+        <div class="th-actions">
+          <div class="th-btn" title="Switch character" onclick="openOverlay()">👤</div>
+          <div class="th-btn" title="Quiz me">⚡</div>
+          <div class="th-btn" title="Voice">🎙️</div>
+        </div>
+      </div>
+
+      <!-- Topic chips -->
+      <div class="topic-strip" id="topicStrip"></div>
+
+      <!-- Messages -->
+      <div class="messages" id="messages">
+        <div id="welcomeCard"></div>
+      </div>
+
+      <!-- Input -->
+      <div class="input-area">
+        <div class="quick-replies" id="quickReplies"></div>
+        <div class="input-row">
+          <button class="btn-mic" title="Voice input">🎙️</button>
+          <textarea class="input-box" id="msgInput"
+            placeholder="Ask your tutor anything…"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
+            oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,130)+'px'"></textarea>
+          <button class="btn-send" onclick="sendMessage()" id="sendBtn">
+            <div class="btn-send-inner">➤</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── TUTOR CHARACTERS ──
+const TUTORS = [
+  {
+    id:'matt', name:'Matt', emoji:'🧮', subject:'Mathematics', subjectShort:'Math',
+    color:'#a78bfa', r:167, g:139, b:250,
+    bg:'rgba(167,139,250,.12)', border:'rgba(167,139,250,.3)',
+    mood:'Logical & Fun',
+    tagline:'Makes numbers feel like a superpower!',
+    desc:'Cool, patient math teacher who breaks down complex problems step by step. Loves using real-life examples.',
+    traits:['Step-by-step','Visual learner','Patient','Encouraging'],
+    topics:['Algebra','Quadratics','Geometry','Trigonometry','Calculus','Statistics'],
+    quickReplies:['Explain this step','Give me a quiz','Show an example','I\'m stuck 😕','Harder problem please'],
+    stats:{students:'12K',rating:'4.9',solved:'98K'},
+    systemPrompt:`You are Matt, a fun and cool mathematics tutor for Indian students from Class 6 to 12. You have a calm, encouraging, step-by-step teaching style. You love breaking down complex math problems into simple, digestible steps. You use real-life examples often. You use emojis occasionally to keep things light. When solving problems, always show working clearly. Use formatting like numbered steps, and wrap math expressions clearly. Address the student warmly. Keep responses concise but complete.`
+  },
+  {
+    id:'george', name:'George', emoji:'📖', subject:'English', subjectShort:'English',
+    color:'#34d399', r:52, g:211, b:153,
+    bg:'rgba(52,211,153,.1)', border:'rgba(52,211,153,.25)',
+    mood:'Witty & Warm',
+    tagline:'Helps words flow like poetry!',
+    desc:'A witty English professor who loves literature, grammar, and helping students express themselves beautifully.',
+    traits:['Descriptive','Grammar-focused','Creative','Literary'],
+    topics:['Grammar','Essay Writing','Poetry','Literature','Comprehension','Vocabulary'],
+    quickReplies:['Check my grammar','Help me write','Explain this poem','Give me a topic','Vocabulary tips'],
+    stats:{students:'9K',rating:'4.8',solved:'76K'},
+    systemPrompt:`You are George, a witty and warm English language and literature tutor for Indian students from Class 6 to 12. You have a love for words, grammar, and literature. You help students with grammar corrections, essay writing, poem analysis, and comprehension. You quote famous authors occasionally. You correct mistakes gently and explain the why behind grammar rules. Keep your tone warm, sometimes playful. Use clear formatting when explaining rules.`
+  },
+  {
+    id:'nova', name:'Nova', emoji:'🔬', subject:'Science', subjectShort:'Science',
+    color:'#00d4aa', r:0, g:212, b:170,
+    bg:'rgba(0,212,170,.1)', border:'rgba(0,212,170,.25)',
+    mood:'Curious & Energetic',
+    tagline:'Science is everywhere — let\'s explore it!',
+    desc:'An energetic science enthusiast who turns complex concepts into exciting discoveries.',
+    traits:['Experiment-based','Curious','Visual','Engaging'],
+    topics:['Biology','Chemistry','Physics','Ecology','Cells','Reactions'],
+    quickReplies:['Explain this concept','Run an experiment','Quiz me','Why does this happen?','Real-life example?'],
+    stats:{students:'15K',rating:'4.9',solved:'120K'},
+    systemPrompt:`You are Nova, an energetic and curious science tutor for Indian students from Class 6 to 12. You cover Biology, Chemistry, and Physics. You love explaining concepts through real-world phenomena and thought experiments. You make science exciting by connecting it to everyday life. Use analogies, examples, and occasionally emojis. When explaining processes, use clear numbered steps or bullet points. Be enthusiastic and encouraging.`
+  },
+  {
+    id:'priya', name:'Priya', emoji:'🏛️', subject:'Social Studies', subjectShort:'SST',
+    color:'#fbbf24', r:251, g:191, b:36,
+    bg:'rgba(251,191,36,.1)', border:'rgba(251,191,36,.25)',
+    mood:'Storytelling & Passionate',
+    tagline:'History comes alive when you understand why!',
+    desc:'A passionate history and geography teacher who tells the story behind every event.',
+    traits:['Storyteller','Date-focused','Analytical','Contextual'],
+    topics:['World History','Indian History','Geography','Civics','Economics','Maps'],
+    quickReplies:['Tell me about this event','Why did this happen?','Key dates?','Map question','Civics doubt'],
+    stats:{students:'8K',rating:'4.7',solved:'65K'},
+    systemPrompt:`You are Priya, a passionate Social Studies tutor for Indian students from Class 6 to 12. You cover History, Geography, Civics, and Economics. You have a storytelling approach — you make historical events vivid and understandable. You help students see the cause-and-effect behind events. You know Indian NCERT curriculum well. Use timelines, bullet points for key facts, and engaging narratives. Be warm and motivating.`
+  },
+  {
+    id:'aryan', name:'Aryan', emoji:'⚡', subject:'Physics', subjectShort:'Physics',
+    color:'#60a5fa', r:96, g:165, b:250,
+    bg:'rgba(96,165,250,.1)', border:'rgba(96,165,250,.25)',
+    mood:'Precise & Motivating',
+    tagline:'Physics is just the universe explaining itself!',
+    desc:'An analytical physics tutor who loves diagrams, formulae, and making mechanics intuitive.',
+    traits:['Formula-based','Diagram-lover','Analytical','Precise'],
+    topics:['Mechanics','Optics','Electricity','Magnetism','Waves','Modern Physics'],
+    quickReplies:['Solve this numerically','Explain the formula','Draw a diagram','Derivation please','Concept doubt'],
+    stats:{students:'11K',rating:'4.8',solved:'89K'},
+    systemPrompt:`You are Aryan, a precise and motivating Physics tutor for Indian students from Class 6 to 12. You love solving numerical problems step by step, deriving formulas, and explaining concepts with diagrams described in text. You cover Mechanics, Optics, Electricity, Waves, and Modern Physics. Always show units in calculations. Use clear mathematical formatting. Be encouraging when students struggle with numericals.`
+  },
+  {
+    id:'sara', name:'Sara', emoji:'🧪', subject:'Chemistry', subjectShort:'Chem',
+    color:'#f87171', r:248, g:113, b:113,
+    bg:'rgba(248,113,113,.1)', border:'rgba(248,113,113,.25)',
+    mood:'Methodical & Encouraging',
+    tagline:'Chemistry is just cooking with atoms!',
+    desc:'A methodical chemistry guide who makes reactions, equations and the periodic table feel approachable.',
+    traits:['Reaction-focused','IUPAC expert','Patient','Systematic'],
+    topics:['Periodic Table','Chemical Reactions','Organic Chemistry','Acids & Bases','Bonding','Electrochemistry'],
+    quickReplies:['Balance this equation','Explain this reaction','Periodic table help','Organic mechanism','Numericals'],
+    stats:{students:'7K',rating:'4.8',solved:'58K'},
+    systemPrompt:`You are Sara, a methodical and encouraging Chemistry tutor for Indian students from Class 6 to 12. You make chemical reactions, the periodic table, and organic chemistry approachable and logical. You help balance equations, explain mechanisms, and crack NCERT problems. You're patient and break down complex topics systematically. Use structured formatting, show chemical equations clearly using text representations.`
+  },
+];
+
+let currentTutor = null;
+let chatHistory = [];
+let msgCount = 0;
+
+// ── INIT ──
+function init() {
+  renderSidebar();
+  renderOverlay();
+  // Show overlay on load
+  document.getElementById('charOverlay').classList.remove('hidden');
+}
+
+function renderSidebar() {
+  const list = document.getElementById('cpList');
+  list.innerHTML = TUTORS.map(t => `
+    <div class="char-card ${currentTutor?.id===t.id?'active':''}" 
+         style="--char-color:${t.color}" onclick="selectTutor('${t.id}')">
+      <div class="char-card-inner">
+        <div class="char-emoji-wrap" style="background:${t.bg};border-color:${t.border}">
+          ${t.emoji}<div class="char-online"></div>
+        </div>
+        <div class="char-info">
+          <div class="char-name">${t.name}</div>
+          <span class="char-subj" style="background:${t.bg};color:${t.color};border:1px solid ${t.border}">${t.subjectShort}</span>
+          <div class="char-tagline">${t.tagline}</div>
+        </div>
+      </div>
+      <div class="char-stats">
+        <div class="cs-stat"><div class="cs-val" style="color:${t.color}">${t.stats.students}</div><div class="cs-lbl">Students</div></div>
+        <div class="cs-stat"><div class="cs-val" style="color:${t.color}">⭐${t.stats.rating}</div><div class="cs-lbl">Rating</div></div>
+        <div class="cs-stat"><div class="cs-val" style="color:${t.color}">${t.stats.solved}</div><div class="cs-lbl">Solved</div></div>
+      </div>
+      <div class="char-active-badge" style="background:${t.color}">Active</div>
+    </div>`).join('');
+}
+
+function renderOverlay() {
+  const grid = document.getElementById('cpGrid');
+  grid.innerHTML = TUTORS.map(t => `
+    <div class="cp-card" style="--char-col:${t.color};--cr:${t.r};--cg:${t.g};--cb:${t.b}" onclick="selectTutor('${t.id}')">
+      <div class="cp-card-emoji" style="background:${t.bg};border-color:${t.border}">${t.emoji}</div>
+      <div class="cp-card-name">${t.name}</div>
+      <span class="cp-card-subj" style="background:${t.bg};color:${t.color};border:1px solid ${t.border}">${t.subject}</span>
+      <div class="cp-card-desc">${t.desc}</div>
+      <div class="cp-card-traits">${t.traits.map(tr=>`<span class="cp-trait">${tr}</span>`).join('')}</div>
+    </div>`).join('');
+}
+
+function selectTutor(id) {
+  const tutor = TUTORS.find(t => t.id === id);
+  if(!tutor) return;
+  currentTutor = tutor;
+  chatHistory = [];
+  msgCount = 0;
+
+  // Update CSS vars for theme
+  document.documentElement.style.setProperty('--char-color', tutor.color);
+  document.documentElement.style.setProperty('--char-r', tutor.r);
+  document.documentElement.style.setProperty('--char-g', tutor.g);
+  document.documentElement.style.setProperty('--char-b', tutor.b);
+
+  // Update header
+  document.getElementById('thAv').textContent = tutor.emoji;
+  document.getElementById('thAv').style.borderColor = tutor.color;
+  document.getElementById('thName').textContent = tutor.name + ' — ' + tutor.subject;
+  document.getElementById('thStatus').textContent = 'Online · Ready to teach';
+  document.getElementById('thMood').textContent = tutor.mood;
+  document.getElementById('thMood').style.borderColor = tutor.color;
+  document.getElementById('thMood').style.color = tutor.color;
+  document.getElementById('thMood').style.background = tutor.bg;
+
+  // Topic chips
+  const strip = document.getElementById('topicStrip');
+  strip.innerHTML = tutor.topics.map(tp =>
+    `<div class="topic-chip" onclick="sendQuick('Tell me about ${tp}')">${tp}</div>`).join('');
+
+  // Quick replies
+  const qr = document.getElementById('quickReplies');
+  qr.innerHTML = tutor.quickReplies.map(r =>
+    `<div class="qr-chip" onclick="sendQuick('${r}')">${r}</div>`).join('');
+
+  // Input placeholder
+  document.getElementById('msgInput').placeholder = `Ask ${tutor.name} anything about ${tutor.subject}…`;
+
+  // Render welcome card
+  const msgs = document.getElementById('messages');
+  msgs.innerHTML = `
+    <div class="welcome-card" style="--char-color:${tutor.color};--char-r:${tutor.r};--char-g:${tutor.g};--char-b:${tutor.b}">
+      <div class="wc-avatar" style="border-color:${tutor.color};box-shadow:0 0 28px rgba(${tutor.r},${tutor.g},${tutor.b},.4)">${tutor.emoji}</div>
+      <div class="wc-name">Hi! I'm ${tutor.name} 👋</div>
+      <div class="wc-sub">${tutor.desc}<br/><br/>What would you like to learn today?</div>
+      <div class="wc-chips">
+        ${tutor.topics.slice(0,4).map(tp=>`<div class="wc-chip" onclick="sendQuick('Teach me about ${tp}')">${tp}</div>`).join('')}
+      </div>
+    </div>`;
+
+  renderSidebar();
+  document.getElementById('charOverlay').classList.add('hidden');
+}
+
+function openOverlay() {
+  document.getElementById('charOverlay').classList.remove('hidden');
+}
+
+// ── CHAT ──
+async function sendMessage() {
+  const input = document.getElementById('msgInput');
+  const text = input.value.trim();
+  if(!text || !currentTutor) return;
+  input.value = '';
+  input.style.height = 'auto';
+  appendUserMsg(text);
+  chatHistory.push({role:'user', content: text});
+  showTyping();
+  try {
+    const reply = await callGemini(text);
+    hideTyping();
+    appendTutorMsg(reply);
+    chatHistory.push({role:'assistant', content: reply});
+    msgCount++;
+    if(msgCount % 3 === 0) showXpPop();
+  } catch(e) {
+    hideTyping();
+    appendTutorMsg("Oops! I had trouble connecting. Please check your network and try again. 🙏");
+  }
+}
+
+function sendQuick(text) {
+  document.getElementById('msgInput').value = text;
+  sendMessage();
+}
+
+async function sendMessage() {
+
+  const input = document.getElementById("msgInput");
+  const text = input.value.trim();
+
+  if (!text || !currentTutor) return;
+
+  input.value = "";
+  input.style.height = "auto";
+
+  appendUserMsg(text);
+
+  chatHistory.push({
+    role: "user",
+    content: text
+  });
+
+  showTyping();
+
+  try {
+
+    const reply = await callAI(text);
+
+    hideTyping();
+
+    appendTutorMsg(reply);
+
+    chatHistory.push({
+      role: "assistant",
+      content: reply
+    });
+
+    msgCount++;
+
+    if (msgCount % 3 === 0) {
+      showXpPop();
+    }
+
+  } catch (e) {
+
+    hideTyping();
+
+    appendTutorMsg(
+      "⚠️ Server connection failed. Please restart the server."
+    );
+
+  }
+}
+
+
+async function callAI(text) {
+
+  const messages = [
+    ...chatHistory,
+    { role: "user", content: text }
+  ];
+
+  const response = await fetch("http://localhost:3000/api/chat", {
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json"
+    },
+
+    body: JSON.stringify({
+      system: currentTutor.systemPrompt,
+      messages: messages
+    })
+
+  });
+
+  if (!response.ok) {
+    throw new Error("Server error");
+  }
+
+  const data = await response.json();
+
+  return data.content?.[0]?.text || "No response from AI.";
+}
+
+function appendUserMsg(text) {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `
+    <div class="msg-av user-av">😊</div>
+    <div class="msg-body">
+      <div class="msg-bubble">${escHtml(text)}</div>
+      <div class="msg-time">${getTime()}</div>
+    </div>`;
+  msgs.appendChild(div);
+  scrollBottom();
+}
+
+function appendTutorMsg(text) {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg tutor';
+  const formatted = formatMsg(text);
+  div.innerHTML = `
+    <div class="msg-av tutor-av" style="border-color:${currentTutor.color};box-shadow:0 0 10px rgba(${currentTutor.r},${currentTutor.g},${currentTutor.b},.2)">${currentTutor.emoji}</div>
+    <div class="msg-body">
+      <div class="msg-bubble">${formatted}</div>
+      <div class="msg-time">${currentTutor.name} · ${getTime()}</div>
+      <div class="msg-actions">
+        <div class="msg-act" onclick="copyMsg(this)">📋 Copy</div>
+        <div class="msg-act" onclick="bookmarkMsg(this)">🔖 Save</div>
+        <div class="msg-act" onclick="askFollowup(this)">↩️ Follow-up</div>
+      </div>
+    </div>`;
+  msgs.appendChild(div);
+  scrollBottom();
+}
+
+function formatMsg(text) {
+  // Bold
+  text = text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  // Italic
+  text = text.replace(/\*(.*?)\*/g,'<em>$1</em>');
+  // Inline code
+  text = text.replace(/`([^`]+)`/g,'<code>$1</code>');
+  // Math blocks (between $$ or marked clearly)
+  text = text.replace(/\$\$(.*?)\$\$/gs,'<div class="math-block">$1</div>');
+  // Numbered lists
+  text = text.replace(/^(\d+)\.\s(.+)$/gm,'<div style="margin:3px 0"><strong>$1.</strong> $2</div>');
+  // Bullet lists
+  text = text.replace(/^[•\-\*]\s(.+)$/gm,'<div style="margin:3px 0;padding-left:12px">• $1</div>');
+  // Line breaks
+  text = text.replace(/\n\n/g,'<br/><br/>').replace(/\n/g,'<br/>');
+  return text;
+}
+
+let typingEl = null;
+function showTyping() {
+  const msgs = document.getElementById('messages');
+  typingEl = document.createElement('div');
+  typingEl.id = 'typingIndicator';
+  typingEl.className = 'typing-wrap';
+  typingEl.innerHTML = `
+    <div class="msg-av tutor-av" style="border-color:${currentTutor.color}">${currentTutor.emoji}</div>
+    <div class="typing-bubble">
+      <div class="td" style="background:${currentTutor.color}"></div>
+      <div class="td" style="background:${currentTutor.color}"></div>
+      <div class="td" style="background:${currentTutor.color}"></div>
+    </div>`;
+  msgs.appendChild(typingEl);
+  scrollBottom();
+}
+
+function hideTyping() {
+  document.getElementById('typingIndicator')?.remove();
+}
+
+function showXpPop() {
+  const xp = ['+15 XP','+ 20 XP','+25 XP'][Math.floor(Math.random()*3)];
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'xp-pop';
+  div.innerHTML = `<span class="xp-pop-icon">⚡</span><span>Great learning! <strong>${xp} earned</strong> for this session!</span>`;
+  msgs.appendChild(div);
+  scrollBottom();
+  setTimeout(()=>div.style.opacity='0', 3000);
+  setTimeout(()=>div.remove(), 3500);
+}
+
+function clearChat() {
+  if(!currentTutor) return;
+  chatHistory = [];
+  selectTutor(currentTutor.id);
+}
+
+function copyMsg(btn) {
+  const text = btn.closest('.msg-body').querySelector('.msg-bubble').innerText;
+  navigator.clipboard.writeText(text).catch(()=>{});
+  btn.textContent = '✅ Copied!';
+  setTimeout(()=>btn.textContent='📋 Copy', 2000);
+}
+
+function bookmarkMsg(btn) {
+  btn.textContent = '✅ Saved!';
+  setTimeout(()=>btn.textContent='🔖 Save', 2000);
+}
+
+function askFollowup(btn) {
+  const bubble = btn.closest('.msg-body').querySelector('.msg-bubble').innerText.slice(0,60);
+  document.getElementById('msgInput').value = `Can you explain more about: "${bubble}..."`;
+  document.getElementById('msgInput').focus();
+}
+
+function scrollBottom() {
+  const msgs = document.getElementById('messages');
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function getTime() {
+  return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
+
+function escHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+init();
+</script>
+</body>
+</html>
