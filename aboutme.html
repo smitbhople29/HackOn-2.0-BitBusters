@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tell Us About Yourself | StudEase</title>
+
+  <style>
+    :root {
+      --bg: #e9f2ff;
+      --card: rgba(255, 255, 255, 0.92);
+      --card-2: rgba(245, 252, 255, 0.85);
+      --card-3: rgba(255, 255, 255, 0.75);
+      --input: rgba(245, 252, 255, 0.9);
+      --text: #0f172a;
+      --muted: rgba(15, 23, 42, 0.65);
+      --accent: #0ea5e9;
+      --accent-2: #6366f1;
+      --shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+      --radius: 18px;
+      --border: 1px solid rgba(15, 23, 42, 0.12);
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .theme-dark {
+      --bg: #070b16;
+      --card: rgba(10, 17, 33, 0.92);
+      --card-2: rgba(15, 23, 42, 0.78);
+      --card-3: rgba(255, 255, 255, 0.08);
+      --input: rgba(23, 32, 55, 0.75);
+      --text: #f3f4f8;
+      --muted: rgba(243, 244, 248, 0.75);
+      --accent: #5af6ff;
+      --accent-2: #a855f7;
+      --shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+      --border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background: radial-gradient(circle at top, rgba(99, 102, 241, 0.25), transparent 55%),
+        linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(236, 245, 255, 0.9)),
+        var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .theme-dark body {
+      background: radial-gradient(circle at top, rgba(90, 246, 255, 0.12), transparent 55%),
+        linear-gradient(135deg, rgba(128, 90, 245, 0.2), rgba(10, 17, 33, 0.92)),
+        var(--bg);
+    }
+
+    .container {
+      width: min(1000px, 100%);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(240, 248, 255, 0.9));
+      border: var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px 36px;
+      backdrop-filter: blur(18px);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .theme-dark .container {
+      background: linear-gradient(135deg, rgba(20, 28, 48, 0.9), rgba(16, 22, 40, 0.85));
+      box-shadow: 0 18px 52px rgba(0, 0, 0, 0.55);
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0.46;
+      mix-blend-mode: screen;
+      background-repeat: no-repeat;
+      background-position: top left;
+      background-size: 140% 140%;
+      animation: drift 14s linear infinite alternate;
+    }
+
+    body::before {
+      background-image: radial-gradient(circle at 18% 15%, rgba(90, 246, 255, 0.45), transparent 42%),
+        radial-gradient(circle at 84% 25%, rgba(168, 85, 247, 0.32), transparent 45%);
+    }
+
+    body::after {
+      background-image: radial-gradient(circle at 72% 82%, rgba(10, 173, 255, 0.32), transparent 44%),
+        radial-gradient(circle at 38% 64%, rgba(99, 102, 241, 0.28), transparent 52%);
+    }
+
+    @keyframes drift {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+      100% {
+        transform: translate(-18px, 24px) scale(1.02);
+      }
+    }
+
+    .container {
+      animation: floatIn 0.85s ease-out both;
+    }
+
+    @keyframes floatIn {
+      from {
+        opacity: 0;
+        transform: translateY(22px) scale(0.986);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    button {
+      background-size: 220% 220%;
+      animation: buttonGlow 5s ease infinite;
+    }
+
+    @keyframes buttonGlow {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      margin: 0;
+      letter-spacing: 0.02em;
+    }
+
+    .subtitle {
+      margin: 8px 0 24px;
+      color: var(--muted);
+      line-height: 1.5;
+      max-width: 760px;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .theme-toggle {
+      position: relative;
+      border: none;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+    }
+
+    .theme-toggle__track {
+      position: relative;
+      width: 42px;
+      height: 24px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.12);
+      border: 1px solid rgba(15, 23, 42, 0.18);
+      display: grid;
+      place-items: center;
+      transition: background 0.3s ease, border 0.3s ease;
+    }
+
+    .theme-toggle__thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.24);
+      transition: transform 0.3s ease, background 0.3s ease;
+      transform: translateX(-8px);
+    }
+
+    .theme-toggle__icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.95rem;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .theme-dark .theme-toggle__track {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .theme-dark .theme-toggle__thumb {
+      transform: translateX(8px);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .theme-dark .theme-toggle__icon {
+      opacity: 0.9;
+    }
+
+    .section {
+      margin-top: 28px;
+      padding: 22px 22px 18px;
+      border-radius: 16px;
+      background: var(--card-2);
+      border: var(--border);
+    }
+
+    .section h2 {
+      margin: 0;
+      font-size: 1.35rem;
+      letter-spacing: 0.01em;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    input,
+    select,
+    textarea {
+      border-radius: 12px;
+      border: var(--border);
+      background: var(--input);
+      color: var(--text);
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(90, 246, 255, 0.95);
+      box-shadow: 0 0 0 4px rgba(90, 246, 255, 0.2);
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .two-col {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .radio-card {
+      flex: 1 1 220px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: var(--border);
+      background: var(--card-2);
+      cursor: pointer;
+      transition: transform 0.15s ease, border 0.15s ease, background 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .radio-card .icon {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: rgba(14, 165, 233, 0.12);
+      color: var(--accent);
+      font-size: 1.2rem;
+    }
+
+    .radio-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(14, 165, 233, 0.55);
+      background: rgba(14, 165, 233, 0.12);
+    }
+
+    .radio-card input {
+      accent-color: var(--accent);
+      width: 18px;
+      height: 18px;
+      margin-right: 10px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .radio-card strong {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .helper {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    .subjects {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+      padding: 14px 14px 12px;
+      border-radius: 14px;
+      background: var(--card-3);
+      border: var(--border);
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .subjects h3 {
+      margin: 0;
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+
+    .subjects label {
+      font-weight: 500;
+    }
+
+    .subjects input[type="checkbox"] {
+      accent-color: var(--accent);
+      margin-right: 10px;
+    }
+
+    .quiz {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 16px;
+      background: var(--card);
+      border: var(--border);
+      transition: background 0.3s ease;
+    }
+
+    .quiz h3 {
+      margin-top: 0;
+    }
+
+    .quiz .question {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 12px;
+      background: var(--card-3);
+      border: var(--border);
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.08);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .quiz .options {
+      margin-top: 10px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .quiz .options label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: var(--card-3);
+      border: var(--border);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+      transition: border 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .quiz .options input {
+      accent-color: var(--accent);
+    }
+
+    .quiz .options label:hover {
+      background: rgba(14, 165, 233, 0.16);
+      border-color: rgba(14, 165, 233, 0.35);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: rgba(12, 15, 24, 0.95);
+      box-shadow: 0 14px 26px rgba(15, 23, 42, 0.18);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 32px rgba(15, 23, 42, 0.28);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 10px 18px rgba(15, 23, 42, 0.2);
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(90, 246, 255, 0.35);
+      background: rgba(90, 246, 255, 0.08);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .result[data-visible="true"] {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .result h3 {
+      margin-top: 0;
+      color: #cdf0ff;
+    }
+
+    .result p {
+      margin: 8px 0;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 720px) {
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .radio-card {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container" role="main">
+    <header>
+      <div class="header-row">
+        <div>
+          <h1>Tell us about yourself</h1>
+          <p class="subtitle">
+            Welcome to StudEase! Share your preferences, study goals, and learning style so we can
+            recommend the best path, subjects, and mini quizzes tailored to you.
+          </p>
+        </div>
+
+        <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+          <span class="theme-toggle__track">
+            <span class="theme-toggle__thumb" aria-hidden="true"></span>
+          </span>
+          <span class="theme-toggle__icon" aria-hidden="true">☀️</span>
+        </button>
+      </div>
+    </header>
+
+    <form id="profileForm" autocomplete="off">
+      <section class="section" aria-labelledby="section-personal">
+      <h2 id="section-personal">Student Profile</h2>
+
+      <div class="grid two-col">
+        <div class="field">
+          <label for="name">Full Name</label>
+          <input id="name" name="name" type="text" placeholder="e.g. Aarav Sharma" />
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="school">School / Institute</label>
+        <input id="school" name="school" type="text" placeholder="e.g. Delhi Public School" />
+      </div>
+
+      <div class="field">
+        <label>Preferred study style</label>
+        <div class="radio-group" role="radiogroup" aria-label="Preferred study style">
+          <label class="radio-card">
+            <input type="radio" name="learningStyle" value="visual" checked />
+            <span class="icon" aria-hidden="true">📊</span>
+            <div>
+              <strong>Visual</strong>
+              <div class="helper">Charts, videos, diagrams & flashcards</div>
+            </div>
+          </label>
+
+          <label class="radio-card">
+            <input type="radio" name="learningStyle" value="auditory" />
+            <span class="icon" aria-hidden="true">🎧</span>
+            <div>
+              <strong>Auditory</strong>
+              <div class="helper">Lectures, podcasts & spoken explanations</div>
+            </div>
+          </label>
+
+          <label class="radio-card">
+            <input type="radio" name="learningStyle" value="kinesthetic" />
+            <span class="icon" aria-hidden="true">🧩</span>
+            <div>
+              <strong>Hands‑on</strong>
+              <div class="helper">Projects, practice problems & experiments</div>
+            </div>
+          </label>
+
+          <label class="radio-card">
+            <input type="radio" name="learningStyle" value="reading" />
+            <span class="icon" aria-hidden="true">📚</span>
+            <div>
+              <strong>Reading / Writing</strong>
+              <div class="helper">Notes, textbooks & rewrite summaries</div>
+            </div>
+          </label>
+
+          <label class="radio-card">
+            <input type="radio" name="learningStyle" value="social" />
+            <span class="icon" aria-hidden="true">🗣️</span>
+            <div>
+              <strong>Social</strong>
+              <div class="helper">Group study, discussions & teaching peers</div>
+            </div>
+          </label>
+
+          <label class="radio-card">
+            <input type="radio" name="learningStyle" value="problem" />
+            <span class="icon" aria-hidden="true">🧠</span>
+            <div>
+              <strong>Problem Solving</strong>
+              <div class="helper">Challenges, puzzles & timed drills</div>
+            </div>
+          </label>
+
+          <label class="radio-card">
+            <input type="radio" name="learningStyle" value="mixed" />
+            <span class="icon" aria-hidden="true">✨</span>
+            <div>
+              <strong>Mixed</strong>
+              <div class="helper">A blend of methods to keep learning fresh</div>
+            </div>
+          </label>
+        </div>
+        <p class="helper">
+          Pick the style that makes learning feel easiest and most motivating.
+        </p>
+      </div>
+
+      <div class="field">
+        <label>Current study stage / grade</label>
+        <div class="radio-group" role="radiogroup" aria-label="Study stage">
+          <label class="radio-card">
+            <input type="radio" name="stage" value="school" checked />
+            <div>
+              <strong>8th - 10th Grade</strong>
+              <div class="helper">Foundational learning & school board exams.</div>
+            </div>
+          </label>
+
+          <label class="radio-card">
+            <input type="radio" name="stage" value="higher-secondary" />
+            <div>
+              <strong>11th - 12th Grade</strong>
+              <div class="helper">Prepares for board, JEE/NEET & stream selection.</div>
+            </div>
+          </label>
+
+          <label class="radio-card">
+            <input type="radio" name="stage" value="competitive" />
+            <div>
+              <strong>Engineering / Commerce / Other Exams</strong>
+              <div class="helper">Focused prep for entrance & competitive tests.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div id="subjectsSection" class="subjects" aria-live="polite">
+        <h3>Recommended subjects</h3>
+        <div id="subjectsList">
+          <!-- Filled dynamically -->
+        </div>
+        <p class="helper">
+          Choose the subjects you'd like to focus on. We'll use this to suggest quizzes and
+          assessments.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="section-goals">
+      <h2 id="section-goals">Goals, hobbies & study habits</h2>
+
+      <div class="grid two-col">
+        <div class="field">
+          <label for="goal">Primary education goal</label>
+          <select id="goal" name="goal">
+            <option value="board">Score strong in board exams</option>
+            <option value="jee">Crack JEE / NTA / engineering entrances</option>
+            <option value="neet">Prepare for NEET / medical entrances</option>
+            <option value="commerce">Build foundation in commerce & CA</option>
+            <option value="competitive">General competitive exam prep</option>
+            <option value="skillboost">Learn new skills / improve grades</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="weeklyHours">Study hours per week</label>
+          <input
+            id="weeklyHours"
+            name="weeklyHours"
+            type="number"
+            min="0"
+            max="70"
+            placeholder="e.g. 10"
+          />
+          <p class="helper">
+            This helps us set a target study plan that's realistic for you.
+          </p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="strengths">What are your strengths?</label>
+        <textarea
+          id="strengths"
+          name="strengths"
+          rows="3"
+          placeholder="e.g. Quick at maths, good at coding, strong memory"
+        ></textarea>
+      </div>
+
+      <div class="field">
+        <label for="challenges">What do you find most challenging?</label>
+        <textarea
+          id="challenges"
+          name="challenges"
+          rows="3"
+          placeholder="e.g. Staying consistent, long exams, time management"
+        ></textarea>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="section-quiz">
+      <h2 id="section-quiz">Quick skill-check quiz</h2>
+      <p class="helper">
+        Take this short quiz to get a personalized study tip at the end. No grades recorded.
+      </p>
+
+      <div class="quiz" id="quiz">
+        <div class="question" data-question="1">
+          <p><strong>1.</strong> When you read a new concept, what helps you remember it best?</p>
+          <div class="options">
+            <label>
+              <input type="radio" name="q1" value="a" /> Short notes + highlighting
+            </label>
+            <label>
+              <input type="radio" name="q1" value="b" /> Watching videos / animations
+            </label>
+            <label>
+              <input type="radio" name="q1" value="c" /> Solving practice problems immediately
+            </label>
+            <label>
+              <input type="radio" name="q1" value="d" /> Discussing with friends / teaching it
+            </label>
+          </div>
+        </div>
+
+        <div class="question" data-question="2">
+          <p><strong>2.</strong> Your typical study session lasts:</p>
+          <div class="options">
+            <label>
+              <input type="radio" name="q2" value="a" /> Under 30 minutes
+            </label>
+            <label>
+              <input type="radio" name="q2" value="b" /> 30–60 minutes
+            </label>
+            <label>
+              <input type="radio" name="q2" value="c" /> 60–90 minutes
+            </label>
+            <label>
+              <input type="radio" name="q2" value="d" /> 90+ minutes with breaks
+            </label>
+          </div>
+        </div>
+
+        <div class="question" data-question="3">
+          <p><strong>3.</strong> Which of these feels most motivating right now?</p>
+          <div class="options">
+            <label>
+              <input type="radio" name="q3" value="a" /> A clear daily schedule
+            </label>
+            <label>
+              <input type="radio" name="q3" value="b" /> Practice with mock tests
+            </label>
+            <label>
+              <input type="radio" name="q3" value="c" /> Tracking progress visually
+            </label>
+            <label>
+              <input type="radio" name="q3" value="d" /> Rewarding myself after every topic
+            </label>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="button" id="runAssessment">Get my assessment</button>
+          <button type="button" id="reset">Reset form</button>
+        </div>
+
+        <div id="result" class="result" hidden>
+          <h3>Your study snapshot</h3>
+          <p id="resultSummary"></p>
+          <p id="resultTip"></p>
+        </div>
+      </div>
+    </section>
+    </form>
+  </div>
+
+  <script>
+    const subjectData = {
+      school: [
+        { id: "maths", label: "Mathematics" },
+        { id: "science", label: "Science" },
+        { id: "english", label: "English" },
+        { id: "social", label: "Social Studies" },
+        { id: "computer", label: "Computer Science" },
+      ],
+      "higher-secondary": [
+        { id: "physics", label: "Physics" },
+        { id: "chemistry", label: "Chemistry" },
+        { id: "biology", label: "Biology" },
+        { id: "maths", label: "Mathematics" },
+        { id: "accountancy", label: "Accountancy" },
+        { id: "economics", label: "Economics" },
+        { id: "english", label: "English" },
+      ],
+      competitive: [
+        { id: "physics", label: "Physics" },
+        { id: "chemistry", label: "Chemistry" },
+        { id: "biology", label: "Biology" },
+        { id: "maths", label: "Mathematics" },
+        { id: "aptitude", label: "Aptitude / Logical Reasoning" },
+        { id: "english", label: "English" },
+        { id: "general", label: "General Awareness" },
+      ],
+    };
+
+    const STORAGE_KEY = "studeaseProfile";
+    const stageRadios = document.querySelectorAll('input[name="stage"]');
+    const learningStyleRadios = document.querySelectorAll('input[name="learningStyle"]');
+    const subjectsList = document.getElementById("subjectsList");
+    const resultEl = document.getElementById("result");
+    const resultSummary = document.getElementById("resultSummary");
+    const resultTip = document.getElementById("resultTip");
+    const form = document.getElementById("profileForm");
+
+    function renderSubjects(stage, checkedSubjects = []) {
+      const subjects = subjectData[stage] || [];
+      subjectsList.innerHTML = "";
+      if (!subjects.length) {
+        subjectsList.innerHTML =
+          "<p class='helper'>Choose a stage above to see suggested subjects.</p>";
+        return;
+      }
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "subjects-grid";
+
+      subjects.forEach((subject) => {
+        const id = `subject-${subject.id}`;
+        const isChecked =
+          checkedSubjects.length === 0 || checkedSubjects.includes(subject.label);
+        const label = document.createElement("label");
+        label.htmlFor = id;
+        label.innerHTML = `<input type='checkbox' id='${id}' name='subjects' value='${subject.label}' ${
+          isChecked ? "checked" : ""
+        } /> ${subject.label}`;
+        wrapper.appendChild(label);
+      });
+
+      subjectsList.appendChild(wrapper);
+    }
+
+    function getSelectedStage() {
+      return Array.from(stageRadios).find((radio) => radio.checked)?.value || "school";
+    }
+
+    function setSelectedStage(stage) {
+      stageRadios.forEach((radio) => {
+        radio.checked = radio.value === stage;
+      });
+      renderSubjects(stage, loadProfile()?.subjects || []);
+    }
+
+    function getSelectedLearningStyle() {
+      return (
+        Array.from(learningStyleRadios).find((radio) => radio.checked)?.value ||
+        "visual"
+      );
+    }
+
+    function setSelectedLearningStyle(style) {
+      learningStyleRadios.forEach((radio) => {
+        radio.checked = radio.value === style;
+      });
+    }
+
+    function getSelectedSubjects() {
+      return Array.from(document.querySelectorAll('input[name="subjects"]:checked')).map(
+        (el) => el.value
+      );
+    }
+
+    function getQuizAnswer(question) {
+      const selected = document.querySelector(`input[name="q${question}"]:checked`);
+      return selected ? selected.value : null;
+    }
+
+    function setQuizAnswer(question, value) {
+      if (!value) return;
+      const input = document.querySelector(`input[name="q${question}"][value="${value}"]`);
+      if (input) input.checked = true;
+    }
+
+    function saveProfile() {
+      const profile = {
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        school: document.getElementById("school").value.trim(),
+        learningStyle: getSelectedLearningStyle(),
+        stage: getSelectedStage(),
+        subjects: getSelectedSubjects(),
+        goal: document.getElementById("goal").value,
+        weeklyHours: document.getElementById("weeklyHours").value,
+        strengths: document.getElementById("strengths").value.trim(),
+        challenges: document.getElementById("challenges").value.trim(),
+        quiz: {
+          q1: getQuizAnswer(1),
+          q2: getQuizAnswer(2),
+          q3: getQuizAnswer(3),
+        },
+      };
+
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+      } catch (e) {
+        // ignore storage errors (private mode, full disk, etc.)
+      }
+    }
+
+    function loadProfile() {
+      try {
+        const stored = window.localStorage.getItem(STORAGE_KEY);
+        if (!stored) return null;
+        return JSON.parse(stored);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function applyProfile(profile) {
+      if (!profile) return;
+      document.getElementById("name").value = profile.name || "";
+      document.getElementById("email").value = profile.email || "";
+      document.getElementById("school").value = profile.school || "";
+      setSelectedLearningStyle(profile.learningStyle || "visual");
+      document.getElementById("goal").value = profile.goal || "board";
+      document.getElementById("weeklyHours").value = profile.weeklyHours || "";
+      document.getElementById("strengths").value = profile.strengths || "";
+      document.getElementById("challenges").value = profile.challenges || "";
+
+      const stage = profile.stage || "school";
+      setSelectedStage(stage);
+
+      if (profile.quiz) {
+        setQuizAnswer(1, profile.quiz.q1);
+        setQuizAnswer(2, profile.quiz.q2);
+        setQuizAnswer(3, profile.quiz.q3);
+      }
+    }
+
+    function generateAssessment() {
+      const stage = getSelectedStage();
+      const subjects = getSelectedSubjects();
+      const learningStyle = getSelectedLearningStyle();
+      const weeklyHours = Number(document.getElementById("weeklyHours").value || 0);
+
+      const answers = [getQuizAnswer(1), getQuizAnswer(2), getQuizAnswer(3)];
+      const unanswered = answers.filter((a) => !a).length;
+
+      if (unanswered) {
+        resultSummary.textContent =
+          "Please answer all quiz questions to see your personalized study tip.";
+        resultTip.textContent = "";
+        resultEl.hidden = false;
+        resultEl.dataset.visible = "true";
+        saveProfile();
+        return;
+      }
+
+      const styleHint = {
+        visual:
+          "Try pairing visual summaries (mind maps, infographics) with short video lessons. A daily swipe through flashcards can build strong recall.",
+        auditory:
+          "Record yourself explaining concepts and replay them when commuting. Listen to podcasts or audio lectures for quick revision.",
+        kinesthetic:
+          "Use practice problems and build small projects to reinforce ideas. Try teaching a friend or using a whiteboard for active recall.",
+        reading:
+          "Write concise notes and regularly revisit them. Turn headings into questions to quiz yourself while reading.",
+        social:
+          "Group study can be powerful—try teaching back concepts or running quick discussion sessions with peers.",
+        problem:
+          "Tackle small challenges or timed puzzles to build confidence. Use error logs to learn from tricky questions.",
+        mixed:
+          "Rotate between techniques (visual, practice, discussion) to keep your brain engaged. Keep a quick checklist of what worked best.",
+      };
+
+      const paceHint = {
+        a: "Short sessions work well with spaced repetition. Aim for 20-30 minutes and take brief breaks to keep focus.",
+        b: "A 30-60 minute block with a quick summary at the end helps you retain information. Mix in short quizzes to stay engaged.",
+        c: "Longer sessions are powerful—break them into 20-minute chunks and check your understanding with practice questions.",
+        d: "You have endurance for deep work. Plan focused blocks with deliberate breaks and review quickly afterward.",
+      };
+
+      const motivationHint = {
+        a: "A clear schedule helps consistency—try a weekly plan with goal-based milestones.",
+        b: "Mock tests are great—build a habit of timed practice and review every mistake.",
+        c: "Visual progress trackers (charts, streaks) can keep momentum. Celebrate small wins.",
+        d: "Reward systems work well—set mini-goals and treat yourself when you reach them.",
+      };
+
+      const profile = {
+        stage:
+          stage === "school"
+            ? "Class 8–10 student building a strong foundation"
+            : stage === "higher-secondary"
+            ? "Class 11–12 student preparing for boards and competitive exams"
+            : "Engineering/Commerce/Competitive exam aspirant",
+        subjects: subjects.length ? subjects.join(", ") : "a range of subjects",
+      };
+
+      const studyHoursText = weeklyHours ? `${weeklyHours} hours per week` : "a flexible study schedule";
+
+      const quizPicks = [answers[0], answers[1], answers[2]].map((choice, idx) => {
+        const map = idx === 0 ? paceHint : idx === 1 ? paceHint : motivationHint;
+        return map[choice];
+      });
+
+      resultSummary.textContent =
+        `You're a ${profile.stage} focusing on ${profile.subjects} with ${studyHoursText}. Your quiz responses suggest you learn best with ${learningStyle} techniques.`;
+
+      resultTip.innerHTML = `
+        <strong>Quick tip:</strong> ${styleHint[learningStyle]}<br /><br />
+        ${quizPicks.join("<br /><br />")}
+      `;
+
+      resultEl.hidden = false;
+      resultEl.dataset.visible = "true";
+      saveProfile();
+    }
+
+    function resetForm() {
+      form.reset();
+      document.getElementById("weeklyHours").value = "";
+      const result = document.getElementById("result");
+      result.hidden = true;
+      result.dataset.visible = "";
+      localStorage.removeItem(STORAGE_KEY);
+      renderSubjects(getSelectedStage());
+    }
+
+    function getSavedTheme() {
+      const saved = localStorage.getItem("studeaseTheme");
+      if (saved === "light" || saved === "dark") return saved;
+      return "dark"; // default to dark theme
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.classList.toggle("theme-dark", theme === "dark");
+      const toggle = document.getElementById("themeToggle");
+      if (!toggle) return;
+
+      const icon = toggle.querySelector(".theme-toggle__icon");
+      if (icon) icon.textContent = theme === "dark" ? "☀️" : "🌙";
+
+      toggle.setAttribute(
+        "aria-label",
+        theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+      );
+
+      // Keep the toggle visible to let users switch anytime
+      toggle.style.display = "grid";
+    }
+
+    function setTheme(theme) {
+      localStorage.setItem("studeaseTheme", theme);
+      applyTheme(theme);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.classList.contains("theme-dark") ? "dark" : "light";
+      setTheme(current === "dark" ? "light" : "dark");
+    }
+
+    stageRadios.forEach((radio) => {
+      radio.addEventListener("change", () => renderSubjects(getSelectedStage()));
+    });
+
+    form.addEventListener("input", saveProfile);
+    form.addEventListener("change", saveProfile);
+
+    document.getElementById("runAssessment").addEventListener("click", generateAssessment);
+    document.getElementById("reset").addEventListener("click", resetForm);
+    document.getElementById("themeToggle").addEventListener("click", toggleTheme);
+
+    // Restore saved responses if available
+    applyProfile(loadProfile());
+    renderSubjects(getSelectedStage(), loadProfile()?.subjects || []);
+    setTheme(getSavedTheme());
+  </script>
+</body>
+</html>
