@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>StudEase — Community</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:       #080c1a;
+  --bg2:      #0e1326;
+  --bg3:      #111827;
+  --surface:  #131829;
+  --surface2: #1a2038;
+  --surface3: #1e2545;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.11);
+  --accent:   #f4a623;
+  --accent2:  #ff6b9d;
+  --accent3:  #00d4aa;
+  --blue:     #3a7bd5;
+  --purple:   #8b5cf6;
+  --text:     #e8edf8;
+  --text2:    #7a88aa;
+  --text3:    #c5cde8;
+  --radius:   14px;
+  --rsm:      9px;
+  --rxl:      20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ── BG ── */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 40% at 5% 15%,rgba(58,123,213,0.13) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 35% at 95% 80%,rgba(244,166,35,0.09) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 30% at 55% 45%,rgba(0,212,170,0.05) 0%,transparent 60%);
+}
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,0.03) 1px,transparent 1px);
+  background-size:28px 28px}
+
+/* ── LAYOUT ── */
+.app{position:relative;z-index:1;display:grid;grid-template-columns:240px 1fr 280px;grid-template-rows:56px 1fr;min-height:100vh}
+
+/* ── NAVBAR ── */
+.navbar{
+  grid-column:1/-1;
+  display:flex;align-items:center;gap:16px;
+  padding:0 24px;
+  background:rgba(8,12,26,0.85);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+}
+.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.nav-logo{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 14px rgba(244,166,35,0.3)}
+.nav-name{font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;color:var(--text)}
+.nav-name span{color:var(--accent)}
+.nav-sep{width:1px;height:24px;background:var(--border);margin:0 4px}
+.nav-page{font-size:13px;font-weight:600;color:var(--text2)}
+.nav-search{flex:1;max-width:380px;margin:0 auto;position:relative}
+.nav-search input{
+  width:100%;background:var(--surface);border:1.5px solid var(--border);
+  border-radius:99px;padding:8px 16px 8px 38px;
+  font-family:'Outfit',sans-serif;font-size:13px;color:var(--text);outline:none;
+  transition:border-color .2s,box-shadow .2s
+}
+.nav-search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(244,166,35,.1)}
+.nav-search input::placeholder{color:var(--text2)}
+.nav-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;opacity:.5}
+.nav-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.nav-btn{
+  width:34px;height:34px;border-radius:9px;
+  background:var(--surface);border:1px solid var(--border);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:15px;transition:all .2s;position:relative
+}
+.nav-btn:hover{background:var(--surface2);border-color:var(--border2)}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--accent2);border:2px solid var(--bg)}
+.nav-avatar{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;border:2px solid rgba(58,123,213,.35)}
+
+/* ── SIDEBAR LEFT ── */
+.sidebar-left{
+  background:var(--bg2);border-right:1px solid var(--border);
+  padding:16px 0;overflow-y:auto;
+}
+.sidebar-left::-webkit-scrollbar{width:3px}
+.sidebar-left::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:99px}
+
+.sl-section{padding:0 12px;margin-bottom:6px}
+.sl-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text2);font-weight:700;padding:8px 8px 6px}
+.sl-item{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 10px;border-radius:var(--rsm);cursor:pointer;
+  font-size:13px;font-weight:500;color:var(--text2);
+  transition:all .18s;border:1px solid transparent;margin-bottom:2px
+}
+.sl-item:hover{background:var(--surface);color:var(--text)}
+.sl-item.active{background:rgba(244,166,35,.1);color:var(--accent);border-color:rgba(244,166,35,.2)}
+.sl-item .si-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.sl-badge{margin-left:auto;background:var(--accent2);color:#fff;font-size:10px;font-weight:700;border-radius:99px;padding:2px 7px}
+.sl-badge.blue{background:var(--blue)}
+.sl-badge.green{background:var(--accent3);color:#000}
+
+.sl-user-card{
+  margin:12px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px;
+}
+.sl-uc-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sl-uc-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:18px;border:2px solid rgba(58,123,213,.35)}
+.sl-uc-name{font-weight:700;font-size:14px}
+.sl-uc-class{font-size:11px;color:var(--text2);margin-top:2px}
+.sl-xp-bar{height:5px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-bottom:5px}
+.sl-xp-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:68%;animation:xpp 2s ease-in-out infinite}
+@keyframes xpp{0%,100%{opacity:1}50%{opacity:.7}}
+.sl-xp-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--text2)}
+.sl-xp-meta span:last-child{color:var(--accent);font-weight:700}
+
+/* ── MAIN FEED ── */
+.main-feed{overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px}
+.main-feed::-webkit-scrollbar{width:4px}
+.main-feed::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:99px}
+
+/* Post composer */
+.composer{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--rxl);padding:18px;
+  position:relative;overflow:hidden;
+  animation:fadeUp .5s ease both;
+}
+.composer::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--accent),var(--accent2))}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.composer-top{display:flex;gap:12px;align-items:flex-start}
+.comp-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;border:2px solid rgba(58,123,213,.3)}
+.comp-right{flex:1}
+.comp-type-tabs{display:flex;gap:6px;margin-bottom:10px}
+.comp-tab{
+  padding:5px 14px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;
+  background:var(--surface);border:1.5px solid var(--border);color:var(--text2);transition:all .18s
+}
+.comp-tab.active{background:rgba(244,166,35,.12);border-color:var(--accent);color:var(--accent)}
+.comp-tab:hover:not(.active){border-color:var(--border2);color:var(--text)}
+
+.comp-textarea{
+  width:100%;background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius);padding:12px 14px;
+  font-family:'Outfit',sans-serif;font-size:14px;color:var(--text);
+  resize:none;min-height:80px;outline:none;transition:border-color .2s,box-shadow .2s;
+  line-height:1.6
+}
+.comp-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(244,166,35,.1)}
+.comp-textarea::placeholder{color:var(--text2)}
+
+/* Image preview area */
+.comp-img-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.comp-img-thumb{
+  position:relative;width:80px;height:80px;border-radius:var(--rsm);overflow:hidden;
+  border:1.5px solid var(--border);
+}
+.comp-img-thumb img{width:100%;height:100%;object-fit:cover}
+.comp-img-remove{
+  position:absolute;top:3px;right:3px;width:18px;height:18px;
+  background:rgba(0,0,0,.7);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;cursor:pointer;color:#fff;transition:background .2s
+}
+.comp-img-remove:hover{background:var(--accent2)}
+
+/* Subject tag selector */
+.comp-subjects{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.comp-subj{
+  padding:4px 12px;border-radius:99px;font-size:11px;font-weight:700;cursor:pointer;
+  border:1.5px solid var(--border);color:var(--text2);background:var(--surface);transition:all .18s
+}
+.comp-subj:hover,.comp-subj.sel{border-color:currentColor}
+.cs-math{color:#a78bfa}.cs-math.sel{background:rgba(167,139,250,.12)}
+.cs-sci{color:#34d399}.cs-sci.sel{background:rgba(52,211,153,.12)}
+.cs-eng{color:#f472b6}.cs-eng.sel{background:rgba(244,114,182,.12)}
+.cs-hist{color:#fbbf24}.cs-hist.sel{background:rgba(251,191,36,.12)}
+.cs-phy{color:#60a5fa}.cs-phy.sel{background:rgba(96,165,250,.12)}
+.cs-chem{color:#f87171}.cs-chem.sel{background:rgba(248,113,113,.12)}
+.cs-bio{color:#4ade80}.cs-bio.sel{background:rgba(74,222,128,.12)}
+.cs-geo{color:#fb923c}.cs-geo.sel{background:rgba(251,146,60,.12)}
+
+.comp-bottom{display:flex;align-items:center;gap:8px;margin-top:12px}
+.comp-tool{
+  width:34px;height:34px;border-radius:var(--rsm);
+  background:var(--surface);border:1px solid var(--border);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:16px;transition:all .2s
+}
+.comp-tool:hover{background:var(--surface2);border-color:var(--border2)}
+.comp-tool.img-btn:hover{border-color:var(--accent3);background:rgba(0,212,170,.08)}
+#imgFileInput{display:none}
+.comp-post-btn{
+  margin-left:auto;
+  padding:9px 22px;border-radius:99px;
+  background:linear-gradient(135deg,var(--accent),#e09010);
+  border:none;color:#000;font-family:'Nunito',sans-serif;
+  font-weight:800;font-size:14px;cursor:pointer;
+  box-shadow:0 4px 16px rgba(244,166,35,.3);
+  transition:all .2s;display:flex;align-items:center;gap:6px
+}
+.comp-post-btn:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(244,166,35,.4)}
+
+/* Feed filters */
+.feed-filters{display:flex;gap:8px;align-items:center}
+.ff-label{font-size:12px;color:var(--text2);font-weight:600;flex-shrink:0}
+.ff-btn{
+  padding:6px 14px;border-radius:99px;font-size:12px;font-weight:600;
+  background:var(--surface);border:1.5px solid var(--border);
+  color:var(--text2);cursor:pointer;transition:all .18s;white-space:nowrap
+}
+.ff-btn.active{background:rgba(244,166,35,.12);border-color:var(--accent);color:var(--accent)}
+.ff-btn:hover:not(.active){border-color:var(--border2);color:var(--text)}
+
+/* ── POST CARD ── */
+.post-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--rxl);overflow:hidden;
+  transition:border-color .22s,transform .22s,box-shadow .22s;
+  animation:fadeUp .4s ease both;
+}
+.post-card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.post-card.doubt-type{border-left:3px solid var(--accent2)}
+.post-card.question-type{border-left:3px solid var(--accent)}
+.post-card.discussion-type{border-left:3px solid var(--accent3)}
+.post-card.resource-type{border-left:3px solid var(--purple)}
+
+.pc-header{display:flex;align-items:flex-start;gap:12px;padding:16px 18px 0}
+.pc-avatar{
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  flex-shrink:0;border:2px solid rgba(255,255,255,.08)
+}
+.pc-meta{flex:1}
+.pc-name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pc-name{font-weight:700;font-size:14px}
+.pc-class{font-size:11px;color:var(--text2);background:var(--surface);padding:2px 8px;border-radius:99px;border:1px solid var(--border)}
+.pc-type-badge{font-size:10px;font-weight:800;padding:2px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:.5px}
+.badge-doubt{background:rgba(255,107,157,.15);color:var(--accent2);border:1px solid rgba(255,107,157,.25)}
+.badge-question{background:rgba(244,166,35,.12);color:var(--accent);border:1px solid rgba(244,166,35,.22)}
+.badge-discussion{background:rgba(0,212,170,.1);color:var(--accent3);border:1px solid rgba(0,212,170,.2)}
+.badge-resource{background:rgba(139,92,246,.12);color:var(--purple);border:1px solid rgba(139,92,246,.22)}
+.pc-time{font-size:11px;color:var(--text2);margin-top:3px}
+
+.pc-body{padding:12px 18px}
+.pc-subj-tag{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;
+  margin-bottom:8px
+}
+.pc-title{font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;color:var(--text);margin-bottom:6px;line-height:1.35}
+.pc-text{font-size:13px;color:var(--text2);line-height:1.65}
+.pc-text strong{color:var(--text3)}
+
+/* Image grid in post */
+.pc-images{display:grid;gap:6px;margin-top:12px;border-radius:var(--radius);overflow:hidden}
+.pc-images.one{grid-template-columns:1fr}
+.pc-images.two{grid-template-columns:1fr 1fr}
+.pc-images.three{grid-template-columns:1fr 1fr;grid-template-rows:auto auto}
+.pc-images.three .pi-img:first-child{grid-column:1/-1}
+.pc-img-wrap{position:relative;overflow:hidden;border-radius:var(--rsm);cursor:pointer;background:var(--surface)}
+.pc-img-wrap img{width:100%;display:block;object-fit:cover;max-height:260px;transition:transform .3s}
+.pc-img-wrap:hover img{transform:scale(1.02)}
+.pc-img-overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,.45);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;font-size:22px
+}
+.pc-img-wrap:hover .pc-img-overlay{opacity:1}
+
+.pc-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.pc-tag{font-size:11px;color:var(--blue);background:rgba(58,123,213,.1);border:1px solid rgba(58,123,213,.2);padding:2px 9px;border-radius:99px}
+
+.pc-footer{display:flex;align-items:center;gap:4px;padding:10px 14px 14px;border-top:1px solid var(--border);margin-top:12px}
+.pc-action{
+  display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:var(--rsm);
+  font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;
+  border:1px solid transparent;background:transparent;transition:all .18s
+}
+.pc-action:hover{background:var(--surface);border-color:var(--border)}
+.pc-action.voted{color:var(--accent);background:rgba(244,166,35,.08);border-color:rgba(244,166,35,.2)}
+.pc-action.answered{color:var(--accent3);background:rgba(0,212,170,.08);border-color:rgba(0,212,170,.2)}
+.pc-action span{font-size:15px}
+.pc-action-sep{width:1px;height:20px;background:var(--border);margin:0 4px}
+.pc-share{margin-left:auto;display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:var(--rsm);font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .18s}
+.pc-share:hover{color:var(--text);background:var(--surface)}
+
+/* Replies section */
+.pc-replies{background:var(--surface);padding:14px 18px;border-top:1px solid var(--border)}
+.reply-item{display:flex;gap:10px;margin-bottom:12px;animation:fadeUp .3s ease}
+.reply-item:last-child{margin-bottom:0}
+.reply-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.reply-body{flex:1}
+.reply-header{display:flex;align-items:center;gap:7px;margin-bottom:4px}
+.reply-name{font-size:13px;font-weight:700}
+.reply-time{font-size:11px;color:var(--text2)}
+.reply-ai{font-size:10px;background:linear-gradient(135deg,rgba(108,99,255,.2),rgba(0,212,170,.15));color:var(--accent3);border:1px solid rgba(0,212,170,.25);padding:1px 8px;border-radius:99px;font-weight:700}
+.reply-text{font-size:13px;color:var(--text2);line-height:1.55}
+.reply-text strong{color:var(--text3)}
+.reply-input-row{display:flex;gap:8px;margin-top:10px;align-items:center}
+.reply-input{
+  flex:1;background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:99px;padding:9px 16px;
+  font-family:'Outfit',sans-serif;font-size:13px;color:var(--text);outline:none;
+  transition:border-color .2s
+}
+.reply-input:focus{border-color:var(--accent)}
+.reply-input::placeholder{color:var(--text2)}
+.reply-send{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),#e09010);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;transition:transform .2s
+}
+.reply-send:hover{transform:scale(1.08)}
+
+/* ── RIGHT SIDEBAR ── */
+.sidebar-right{background:var(--bg2);border-left:1px solid var(--border);padding:16px;overflow-y:auto}
+.sidebar-right::-webkit-scrollbar{width:3px}
+.sidebar-right::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:99px}
+.sr-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text2);font-weight:700;margin-bottom:10px;margin-top:4px}
+
+/* Leaderboard */
+.lb-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px}
+.lb-item{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--border)}
+.lb-item:last-child{border-bottom:none}
+.lb-rank{width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.lbr1{background:rgba(255,209,102,.2);color:#fcd34d}
+.lbr2{background:rgba(148,163,184,.15);color:#94a3b8}
+.lbr3{background:rgba(255,140,66,.15);color:#fb923c}
+.lbr-n{background:var(--bg3);color:var(--text2)}
+.lb-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.lb-name{font-size:13px;font-weight:600;flex:1}
+.lb-pts{font-family:'Nunito',sans-serif;font-weight:900;font-size:14px;color:var(--accent)}
+.lb-you{border-radius:var(--rsm);background:rgba(58,123,213,.1);border:1px solid rgba(58,123,213,.2);padding:8px 10px;border-bottom:none!important}
+
+/* Trending topics */
+.trend-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all .18s}
+.trend-item:last-child{border-bottom:none}
+.trend-item:hover .trend-name{color:var(--accent)}
+.trend-num{font-size:16px;font-weight:900;font-family:'Nunito',sans-serif;color:var(--surface3);width:20px;flex-shrink:0}
+.trend-info{flex:1}
+.trend-name{font-size:13px;font-weight:600;transition:color .18s}
+.trend-count{font-size:11px;color:var(--text2);margin-top:2px}
+.trend-subj{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px}
+
+/* Active users */
+.active-users{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.au-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.au-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;position:relative;border:2px solid var(--accent3)}
+.au-dot{position:absolute;bottom:0;right:0;width:9px;height:9px;background:var(--accent3);border-radius:50%;border:2px solid var(--bg2)}
+.au-name{font-size:10px;color:var(--text2);text-align:center;max-width:40px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── IMAGE LIGHTBOX ── */
+.lightbox{
+  position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.9);
+  display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(6px)
+}
+.lightbox.open{display:flex;animation:lbIn .25s ease}
+@keyframes lbIn{from{opacity:0}to{opacity:1}}
+.lb-img{max-width:90vw;max-height:90vh;border-radius:var(--radius);object-fit:contain}
+.lb-close{position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;color:var(--text);transition:all .2s}
+.lb-close:hover{background:var(--accent2);border-color:var(--accent2)}
+
+/* ── TOAST ── */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:var(--radius);padding:12px 16px;
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;color:var(--text3);min-width:220px;
+  box-shadow:0 8px 30px rgba(0,0,0,.4);
+  animation:toastIn .3s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:all
+}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+.toast.out{animation:toastOut .25s ease forwards}
+@keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
+.toast-icon{font-size:18px;flex-shrink:0}
+.toast strong{color:var(--text)}
+
+/* Responsive */
+@media(max-width:1100px){.sidebar-right{display:none}.app{grid-template-columns:220px 1fr}}
+@media(max-width:780px){.sidebar-left{display:none}.app{grid-template-columns:1fr}.navbar{padding:0 16px}.main-feed{padding:16px}}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<div class="app">
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar">
+  <a href="#" class="nav-brand">
+    <div class="nav-logo">🎓</div>
+    <div class="nav-name">Stud<span>Ease</span></div>
+  </a>
+  <div class="nav-sep"></div>
+  <span class="nav-page">Community</span>
+  <div class="nav-search">
+    <span class="nav-search-icon">🔍</span>
+    <input type="text" placeholder="Search doubts, topics, students…" id="searchInput"/>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-btn" title="Notifications">🔔<div class="notif-dot"></div></div>
+    <div class="nav-btn" title="Bookmarks">🔖</div>
+    <div class="nav-avatar">😊</div>
+  </div>
+</nav>
+
+<!-- ── SIDEBAR LEFT ── -->
+<aside class="sidebar-left">
+  <div class="sl-user-card">
+    <div class="sl-uc-top">
+      <div class="sl-uc-av">😊</div>
+      <div>
+        <div class="sl-uc-name">Aarav Sharma</div>
+        <div class="sl-uc-class">Class 9 · Science</div>
+      </div>
+    </div>
+    <div class="sl-xp-bar"><div class="sl-xp-fill"></div></div>
+    <div class="sl-xp-meta"><span>Level 8 · 2,840 XP</span><span>+160 to Level 9</span></div>
+  </div>
+
+  <div class="sl-section">
+    <div class="sl-label">Browse</div>
+    <div class="sl-item active" onclick="filterFeed('all',this)"><span class="si-icon">🏠</span> All Posts</div>
+    <div class="sl-item" onclick="filterFeed('doubt',this)"><span class="si-icon">🙋</span> My Doubts <span class="sl-badge">3</span></div>
+    <div class="sl-item" onclick="filterFeed('question',this)"><span class="si-icon">❓</span> Questions <span class="sl-badge blue">12</span></div>
+    <div class="sl-item" onclick="filterFeed('discussion',this)"><span class="si-icon">💬</span> Discussions</div>
+    <div class="sl-item" onclick="filterFeed('resource',this)"><span class="si-icon">📚</span> Resources <span class="sl-badge green">5</span></div>
+    <div class="sl-item"><span class="si-icon">🔖</span> Saved Posts</div>
+    <div class="sl-item"><span class="si-icon">✅</span> Solved Doubts</div>
+  </div>
+
+  <div class="sl-section">
+    <div class="sl-label">Subjects</div>
+    <div class="sl-item" onclick="filterSubject('Mathematics',this)"><span class="si-icon">📐</span> Mathematics</div>
+    <div class="sl-item" onclick="filterSubject('Science',this)"><span class="si-icon">🔬</span> Science</div>
+    <div class="sl-item" onclick="filterSubject('Physics',this)"><span class="si-icon">⚡</span> Physics</div>
+    <div class="sl-item" onclick="filterSubject('Chemistry',this)"><span class="si-icon">🧪</span> Chemistry</div>
+    <div class="sl-item" onclick="filterSubject('English',this)"><span class="si-icon">📖</span> English</div>
+    <div class="sl-item" onclick="filterSubject('History',this)"><span class="si-icon">🏛️</span> History</div>
+    <div class="sl-item" onclick="filterSubject('Geography',this)"><span class="si-icon">🌍</span> Geography</div>
+    <div class="sl-item" onclick="filterSubject('Biology',this)"><span class="si-icon">🧬</span> Biology</div>
+  </div>
+</aside>
+
+<!-- ── MAIN FEED ── -->
+<main class="main-feed" id="mainFeed">
+
+  <!-- Composer -->
+  <div class="composer">
+    <div class="composer-top">
+      <div class="comp-av">😊</div>
+      <div class="comp-right">
+        <div class="comp-type-tabs">
+          <div class="comp-tab active" onclick="setCompType('doubt',this)">🙋 Doubt</div>
+          <div class="comp-tab" onclick="setCompType('question',this)">❓ Question</div>
+          <div class="comp-tab" onclick="setCompType('discussion',this)">💬 Discussion</div>
+          <div class="comp-tab" onclick="setCompType('resource',this)">📚 Resource</div>
+        </div>
+        <input type="text" id="postTitle" placeholder="Add a title (optional)" style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rsm);padding:9px 14px;font-family:'Outfit',sans-serif;font-size:13px;color:var(--text);outline:none;margin-bottom:8px;transition:border-color .2s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"/>
+        <textarea class="comp-textarea" id="postText" placeholder="Share your doubt, ask a question, or start a discussion… Use @name to mention someone" rows="3"></textarea>
+        <div class="comp-img-preview" id="compImgPreview"></div>
+        <div class="comp-subjects" id="compSubjects">
+          <div class="comp-subj cs-math" onclick="toggleSubj(this)">📐 Math</div>
+          <div class="comp-subj cs-sci" onclick="toggleSubj(this)">🔬 Science</div>
+          <div class="comp-subj cs-phy" onclick="toggleSubj(this)">⚡ Physics</div>
+          <div class="comp-subj cs-chem" onclick="toggleSubj(this)">🧪 Chemistry</div>
+          <div class="comp-subj cs-eng" onclick="toggleSubj(this)">📖 English</div>
+          <div class="comp-subj cs-hist" onclick="toggleSubj(this)">🏛️ History</div>
+          <div class="comp-subj cs-bio" onclick="toggleSubj(this)">🧬 Biology</div>
+          <div class="comp-subj cs-geo" onclick="toggleSubj(this)">🌍 Geography</div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-bottom">
+      <div class="comp-tool img-btn" title="Add Image" onclick="document.getElementById('imgFileInput').click()">🖼️</div>
+      <input type="file" id="imgFileInput" accept="image/*" multiple onchange="handleImgUpload(event)"/>
+      <div class="comp-tool" title="Add Formula">∑</div>
+      <div class="comp-tool" title="Add Code">{ }</div>
+      <div class="comp-tool" title="Add Link">🔗</div>
+      <button class="comp-post-btn" onclick="submitPost()">Post <span>→</span></button>
+    </div>
+  </div>
+
+  <!-- Feed filters -->
+  <div class="feed-filters">
+    <span class="ff-label">Sort:</span>
+    <div class="ff-btn active" onclick="setFilter('latest',this)">🕐 Latest</div>
+    <div class="ff-btn" onclick="setFilter('hot',this)">🔥 Hot</div>
+    <div class="ff-btn" onclick="setFilter('unanswered',this)">🙋 Unanswered</div>
+    <div class="ff-btn" onclick="setFilter('solved',this)">✅ Solved</div>
+  </div>
+
+  <!-- POSTS rendered by JS -->
+  <div id="postsContainer"></div>
+
+</main>
+
+<!-- ── RIGHT SIDEBAR ── -->
+<aside class="sidebar-right">
+
+  <div class="sr-title">🟢 Online Now</div>
+  <div class="active-users" id="activeUsers">
+    <div class="au-item"><div class="au-av" style="background:linear-gradient(135deg,#3a7bd5,#8b5cf6)">👧<div class="au-dot"></div></div><span class="au-name">Priya</span></div>
+    <div class="au-item"><div class="au-av" style="background:linear-gradient(135deg,#00d4aa,#3a7bd5)">👦<div class="au-dot"></div></div><span class="au-name">Rohan</span></div>
+    <div class="au-item"><div class="au-av" style="background:linear-gradient(135deg,#ff6b9d,#f4a623)">👧<div class="au-dot"></div></div><span class="au-name">Ananya</span></div>
+    <div class="au-item"><div class="au-av" style="background:linear-gradient(135deg,#8b5cf6,#ff6b9d)">👦<div class="au-dot"></div></div><span class="au-name">Vikram</span></div>
+    <div class="au-item"><div class="au-av" style="background:linear-gradient(135deg,#f4a623,#00d4aa)">👧<div class="au-dot"></div></div><span class="au-name">Sneha</span></div>
+  </div>
+
+  <div class="sr-title" style="margin-top:6px">🏆 Weekly Leaders</div>
+  <div class="lb-card">
+    <div class="lb-item">
+      <div class="lb-rank lbr1">1</div>
+      <div class="lb-av" style="background:linear-gradient(135deg,#ff6b9d,#f4a623)">👧</div>
+      <div class="lb-name">Priya M.</div>
+      <div class="lb-pts">4,120</div>
+    </div>
+    <div class="lb-item">
+      <div class="lb-rank lbr2">2</div>
+      <div class="lb-av" style="background:linear-gradient(135deg,#3a7bd5,#8b5cf6)">👦</div>
+      <div class="lb-name">Rohan K.</div>
+      <div class="lb-pts">3,870</div>
+    </div>
+    <div class="lb-item">
+      <div class="lb-rank lbr3">3</div>
+      <div class="lb-av" style="background:linear-gradient(135deg,#00d4aa,#3a7bd5)">👧</div>
+      <div class="lb-name">Ananya S.</div>
+      <div class="lb-pts">3,540</div>
+    </div>
+    <div class="lb-item lb-you">
+      <div class="lb-rank lbr-n" style="background:rgba(58,123,213,.2);color:var(--blue)">5</div>
+      <div class="lb-av" style="background:linear-gradient(135deg,#3a7bd5,#8b5cf6)">😊</div>
+      <div class="lb-name" style="color:var(--blue)">You</div>
+      <div class="lb-pts" style="color:var(--blue)">2,840</div>
+    </div>
+  </div>
+
+  <div class="sr-title">🔥 Trending Topics</div>
+  <div class="lb-card">
+    <div class="trend-item"><div class="trend-num">01</div><div class="trend-info"><div class="trend-name">Quadratic Equations</div><div class="trend-count">48 posts today</div></div><span class="trend-subj cs-math" style="background:rgba(167,139,250,.12);color:#a78bfa;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700">Math</span></div>
+    <div class="trend-item"><div class="trend-num">02</div><div class="trend-info"><div class="trend-name">Photosynthesis</div><div class="trend-count">31 posts today</div></div><span class="trend-subj" style="background:rgba(74,222,128,.1);color:#4ade80;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700">Bio</span></div>
+    <div class="trend-item"><div class="trend-num">03</div><div class="trend-info"><div class="trend-name">French Revolution</div><div class="trend-count">27 posts today</div></div><span class="trend-subj" style="background:rgba(251,191,36,.1);color:#fbbf24;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700">Hist</span></div>
+    <div class="trend-item"><div class="trend-num">04</div><div class="trend-info"><div class="trend-name">Newton's Laws</div><div class="trend-count">22 posts today</div></div><span class="trend-subj" style="background:rgba(96,165,250,.1);color:#60a5fa;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700">Phy</span></div>
+    <div class="trend-item"><div class="trend-num">05</div><div class="trend-info"><div class="trend-name">Periodic Table</div><div class="trend-count">19 posts today</div></div><span class="trend-subj" style="background:rgba(248,113,113,.1);color:#f87171;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700">Chem</span></div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,rgba(244,166,35,.1),rgba(0,212,170,.07));border:1px solid rgba(244,166,35,.2);border-radius:var(--radius);padding:14px;text-align:center">
+    <div style="font-size:24px;margin-bottom:6px">🎁</div>
+    <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:4px">Help & Earn XP!</div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.5">Answer a doubt and earn <strong style="color:var(--accent3)">+25 XP</strong>. Mark as Best Answer for <strong style="color:var(--accent)">+50 XP</strong>!</div>
+  </div>
+
+</aside>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img class="lb-img" id="lbImg" src="" alt=""/>
+  <div class="lb-close" onclick="closeLightbox()">✕</div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ── DATA ──
+const POSTS = [
+  {
+    id:1, type:'doubt', subject:'Mathematics', subjectColor:'#a78bfa', subjectBg:'rgba(167,139,250,.12)',
+    author:'Priya Mehta', authorAv:'👧', authorAvBg:'linear-gradient(135deg,#ff6b9d,#f4a623)',
+    authorClass:'Class 9', time:'2 min ago',
+    title:'How do we find discriminant when equation is in different form?',
+    text:'I understand b²-4ac for ax²+bx+c=0 but what if the equation is like <strong>2x² = 5x - 3</strong>? Do we rearrange first? I\'m confused about the steps.',
+    images:[],
+    tags:['quadratic','discriminant','algebra'],
+    votes:14, answers:3, views:87, solved:false,
+    replies:[
+      {name:'Nova AI',av:'🤖',avBg:'linear-gradient(135deg,#6c63ff,#00d4aa)',time:'1 min ago',isAI:true,text:'Great question Priya! Yes — <strong>always rearrange to standard form ax²+bx+c=0 first.</strong> For 2x²=5x−3, subtract 5x and add 3: 2x²−5x+3=0. Now a=2, b=−5, c=3. D = (−5)²−4(2)(3) = 25−24 = 1. Since D>0, there are 2 real solutions! 🎯'},
+      {name:'Rohan K.',av:'👦',avBg:'linear-gradient(135deg,#3a7bd5,#8b5cf6)',time:'just now',isAI:false,text:'Nova is right! I made the same mistake last week. Always rearrange first. Practice tip: always write the standard form before identifying a, b, c.'},
+    ]
+  },
+  {
+    id:2, type:'question', subject:'Physics', subjectColor:'#60a5fa', subjectBg:'rgba(96,165,250,.12)',
+    author:'Vikram Patel', authorAv:'👦', authorAvBg:'linear-gradient(135deg,#8b5cf6,#3a7bd5)',
+    authorClass:'Class 11', time:'15 min ago',
+    title:'Why does a ball thrown horizontally and one dropped fall at the same time?',
+    text:'Our teacher said horizontal and vertical motion are independent in projectile motion. But intuitively it seems like the thrown ball should take longer? Can someone explain with an example?',
+    images:['https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Projectile_motion_vectors.svg/320px-Projectile_motion_vectors.svg.png'],
+    tags:['projectile','kinematics','class11'],
+    votes:22, answers:5, views:143, solved:true,
+    replies:[
+      {name:'Ananya S.',av:'👧',avBg:'linear-gradient(135deg,#00d4aa,#3a7bd5)',time:'10 min ago',isAI:false,text:'Think of it this way: gravity pulls <em>downward only</em>. The horizontal throw adds sideways speed, not upward speed. So both balls start with zero vertical velocity and both accelerate down at 9.8 m/s². Same vertical motion = same time! ✅'},
+    ]
+  },
+  {
+    id:3, type:'discussion', subject:'History', subjectColor:'#fbbf24', subjectBg:'rgba(251,191,36,.12)',
+    author:'Sneha Rao', authorAv:'👧', authorAvBg:'linear-gradient(135deg,#f4a623,#ff6b9d)',
+    authorClass:'Class 10', time:'32 min ago',
+    title:'Was the French Revolution truly a revolution or just a change of rulers?',
+    text:'We discussed this in class today and I\'m not fully convinced it was a true revolution. The poor people still remained poor for decades after. What do you all think? Would love different perspectives!',
+    images:[],
+    tags:['french-revolution','history','class10','opinion'],
+    votes:31, answers:8, views:210, solved:false,
+    replies:[
+      {name:'Arjun D.',av:'👦',avBg:'linear-gradient(135deg,#f4a623,#00d4aa)',time:'20 min ago',isAI:false,text:'I think it was a revolution in <strong>ideology</strong> — the idea that kings don\'t have divine rights and citizens can demand rights. Even if poverty persisted, that shift in thinking changed the world permanently.'},
+    ]
+  },
+  {
+    id:4, type:'resource', subject:'Chemistry', subjectColor:'#f87171', subjectBg:'rgba(248,113,113,.12)',
+    author:'Meera Joshi', authorAv:'👩', authorAvBg:'linear-gradient(135deg,#f87171,#8b5cf6)',
+    authorClass:'Class 12', time:'1 hr ago',
+    title:'📋 Complete Periodic Table Memory Tricks — Class 12 Board Prep',
+    text:'I made this cheat sheet for remembering all 118 elements with mnemonics! Sharing for everyone appearing in boards. Saved me during mock tests. Feel free to screenshot and share 🙌',
+    images:['https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/This_is_the_modified_Periodic_Table.svg/400px-This_is_the_modified_Periodic_Table.svg.png'],
+    tags:['periodic-table','class12','boards','chemistry','resource'],
+    votes:67, answers:12, views:520, solved:false,
+    replies:[]
+  },
+];
+
+let currentType = 'doubt';
+let currentFilter = 'all';
+let composerImages = [];
+
+// ── RENDER POSTS ──
+function renderPosts(posts) {
+  const container = document.getElementById('postsContainer');
+  container.innerHTML = '';
+  if(!posts.length){
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)"><div style="font-size:40px;margin-bottom:12px">🔍</div><div style="font-size:15px">No posts found</div></div>';
+    return;
+  }
+  posts.forEach((p,i) => {
+    const el = document.createElement('div');
+    el.className = `post-card ${p.type}-type`;
+    el.style.animationDelay = `${i*0.08}s`;
+    el.innerHTML = buildPostHTML(p);
+    container.appendChild(el);
+  });
+}
+
+function buildPostHTML(p) {
+  const imgGrid = p.images.length ? buildImageGrid(p.images, p.id) : '';
+  const tags = p.tags.map(t=>`<span class="pc-tag">#${t}</span>`).join('');
+  const replies = p.replies.map(r=>buildReplyHTML(r)).join('');
+  const badgeClass = {doubt:'badge-doubt',question:'badge-question',discussion:'badge-discussion',resource:'badge-resource'}[p.type];
+  const badgeLabel = {doubt:'🙋 Doubt',question:'❓ Question',discussion:'💬 Discussion',resource:'📚 Resource'}[p.type];
+  return `
+    <div class="pc-header">
+      <div class="pc-avatar" style="background:${p.authorAvBg}">${p.authorAv}</div>
+      <div class="pc-meta">
+        <div class="pc-name-row">
+          <span class="pc-name">${p.author}</span>
+          <span class="pc-class">${p.authorClass}</span>
+          <span class="pc-type-badge ${badgeClass}">${badgeLabel}</span>
+          ${p.solved?'<span style="font-size:10px;background:rgba(0,212,170,.12);color:var(--accent3);border:1px solid rgba(0,212,170,.22);padding:2px 9px;border-radius:99px;font-weight:800">✅ Solved</span>':''}
+        </div>
+        <div class="pc-time">⏱ ${p.time} · 👁 ${p.views} views</div>
+      </div>
+    </div>
+    <div class="pc-body">
+      <div class="pc-subj-tag" style="background:${p.subjectBg};color:${p.subjectColor};border:1px solid ${p.subjectColor}33">${p.subject}</div>
+      <div class="pc-title">${p.title}</div>
+      <div class="pc-text">${p.text}</div>
+      ${imgGrid}
+      <div class="pc-tags">${tags}</div>
+    </div>
+    <div class="pc-footer">
+      <div class="pc-action ${p.votes>20?'voted':''}" onclick="vote(this,${p.id})">
+        <span>👍</span> <span class="vote-count">${p.votes}</span>
+      </div>
+      <div class="pc-action-sep"></div>
+      <div class="pc-action ${p.solved?'answered':''}" onclick="toggleReplies(this,${p.id})">
+        <span>💬</span> ${p.answers} Answers
+      </div>
+      <div class="pc-action" onclick="toggleReplies(this,${p.id})">
+        <span>↩️</span> Reply
+      </div>
+      ${!p.solved?`<div class="pc-action" onclick="markSolved(this,${p.id})"><span>✅</span> Mark Solved</div>`:''}
+      <div class="pc-share"><span>🔗</span> Share</div>
+    </div>
+    <div class="pc-replies" id="replies-${p.id}" style="display:none">
+      ${replies}
+      <div class="reply-input-row">
+        <div class="reply-av" style="background:linear-gradient(135deg,#3a7bd5,#8b5cf6);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">😊</div>
+        <input class="reply-input" placeholder="Write a reply… or ask AI by typing @Nova" id="replyInput-${p.id}" onkeydown="if(event.key==='Enter')submitReply(${p.id})"/>
+        <button class="reply-send" onclick="submitReply(${p.id})">➤</button>
+      </div>
+    </div>
+  `;
+}
+
+function buildReplyHTML(r) {
+  return `
+    <div class="reply-item">
+      <div class="reply-av" style="background:${r.avBg}">${r.av}</div>
+      <div class="reply-body">
+        <div class="reply-header">
+          <span class="reply-name">${r.name}</span>
+          ${r.isAI?'<span class="reply-ai">🤖 AI Tutor</span>':''}
+          <span class="reply-time">${r.time}</span>
+        </div>
+        <div class="reply-text">${r.text}</div>
+      </div>
+    </div>`;
+}
+
+function buildImageGrid(imgs, postId) {
+  const cls = ['','one','two','three'][Math.min(imgs.length,3)];
+  const items = imgs.slice(0,3).map(src=>`
+    <div class="pc-img-wrap pi-img" onclick="openLightbox('${src}')">
+      <img src="${src}" alt="post image" onerror="this.parentElement.style.display='none'"/>
+      <div class="pc-img-overlay">🔍</div>
+    </div>`).join('');
+  return `<div class="pc-images ${cls}">${items}</div>`;
+}
+
+// ── INTERACTIONS ──
+function vote(el, id) {
+  const countEl = el.querySelector('.vote-count');
+  const post = POSTS.find(p=>p.id===id);
+  if(el.classList.contains('voted')) {
+    el.classList.remove('voted'); post.votes--; countEl.textContent=post.votes;
+    showToast('👍','Vote removed');
+  } else {
+    el.classList.add('voted'); post.votes++; countEl.textContent=post.votes;
+    showToast('👍',`Upvoted! <strong>+5 XP earned</strong>`);
+  }
+}
+
+function toggleReplies(el, id) {
+  const box = document.getElementById('replies-'+id);
+  const open = box.style.display !== 'none';
+  box.style.display = open ? 'none' : 'block';
+  if(!open) box.querySelector('.reply-input').focus();
+}
+
+function submitReply(id) {
+  const input = document.getElementById('replyInput-'+id);
+  const text = input.value.trim();
+  if(!text) return;
+  const post = POSTS.find(p=>p.id===id);
+  const box = document.getElementById('replies-'+id);
+  const newReply = {name:'You',av:'😊',avBg:'linear-gradient(135deg,#3a7bd5,#8b5cf6)',time:'just now',isAI:false,text:text};
+  post.replies.push(newReply);
+  post.answers++;
+  const replyRow = box.querySelector('.reply-input-row');
+  const div = document.createElement('div');
+  div.innerHTML = buildReplyHTML(newReply);
+  box.insertBefore(div.firstElementChild, replyRow);
+  input.value = '';
+  showToast('💬',`Reply posted! <strong>+10 XP earned</strong>`);
+  // Simulate AI response if @Nova mentioned
+  if(text.toLowerCase().includes('@nova')) {
+    setTimeout(()=>{
+      const aiReply = {name:'Nova AI',av:'🤖',avBg:'linear-gradient(135deg,#6c63ff,#00d4aa)',time:'just now',isAI:true,text:`Great question! I'm analyzing your doubt. Based on the topic discussed, I recommend reviewing the core concept and trying 2-3 practice problems. Keep it up! 🚀`};
+      const aiDiv = document.createElement('div');
+      aiDiv.innerHTML = buildReplyHTML(aiReply);
+      box.insertBefore(aiDiv.firstElementChild, replyRow);
+      showToast('🤖','Nova AI replied to your mention!');
+    }, 1200);
+  }
+}
+
+function markSolved(el, id) {
+  const post = POSTS.find(p=>p.id===id);
+  post.solved = true;
+  el.closest('.post-card').classList.add('solved');
+  renderPosts(POSTS);
+  showToast('✅',`Marked as Solved! <strong>+25 XP earned</strong>`);
+}
+
+// ── COMPOSER ──
+let compType = 'doubt';
+function setCompType(type, el) {
+  compType = type;
+  document.querySelectorAll('.comp-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const placeholders = {
+    doubt:'Describe your doubt clearly… what have you tried so far?',
+    question:'Write your question in detail…',
+    discussion:'Start a discussion — what topic do you want to explore?',
+    resource:'Share a helpful resource, notes, or study material…'
+  };
+  document.getElementById('postText').placeholder = placeholders[type];
+}
+
+function toggleSubj(el) { el.classList.toggle('sel'); }
+
+function handleImgUpload(event) {
+  const files = Array.from(event.target.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      composerImages.push(e.target.result);
+      renderCompImages();
+    };
+    reader.readAsDataURL(file);
+  });
+  event.target.value = '';
+}
+
+function renderCompImages() {
+  const preview = document.getElementById('compImgPreview');
+  preview.innerHTML = composerImages.map((src,i)=>`
+    <div class="comp-img-thumb">
+      <img src="${src}" alt=""/>
+      <div class="comp-img-remove" onclick="removeCompImg(${i})">✕</div>
+    </div>`).join('');
+}
+
+function removeCompImg(i) {
+  composerImages.splice(i,1);
+  renderCompImages();
+}
+
+function submitPost() {
+  const title = document.getElementById('postTitle').value.trim();
+  const text = document.getElementById('postText').value.trim();
+  if(!text && !title) { showToast('⚠️','Please write something before posting!'); return; }
+  const selSubj = document.querySelector('.comp-subj.sel');
+  const subjectMap = {
+    'Math':'Mathematics','Science':'Science','Physics':'Physics',
+    'Chemistry':'Chemistry','English':'English','History':'History','Biology':'Biology','Geography':'Geography'
+  };
+  const subjText = selSubj ? selSubj.textContent.trim().replace(/^.\s/,'') : 'General';
+  const subjectColors = {Mathematics:'#a78bfa',Physics:'#60a5fa',Chemistry:'#f87171',Science:'#34d399',English:'#f472b6',History:'#fbbf24',Biology:'#4ade80',Geography:'#fb923c',General:'#94a3b8'};
+  const newPost = {
+    id: Date.now(), type: compType,
+    subject: subjectMap[subjText]||subjText,
+    subjectColor: subjectColors[subjectMap[subjText]||subjText]||'#94a3b8',
+    subjectBg: 'rgba(148,163,184,.12)',
+    author:'You (Aarav)', authorAv:'😊',
+    authorAvBg:'linear-gradient(135deg,#3a7bd5,#8b5cf6)',
+    authorClass:'Class 9', time:'just now',
+    title: title || 'Untitled Post',
+    text: text,
+    images: [...composerImages],
+    tags: [],
+    votes:0, answers:0, views:1, solved:false, replies:[]
+  };
+  POSTS.unshift(newPost);
+  document.getElementById('postTitle').value = '';
+  document.getElementById('postText').value = '';
+  composerImages = [];
+  renderCompImages();
+  document.querySelectorAll('.comp-subj.sel').forEach(s=>s.classList.remove('sel'));
+  renderPosts(POSTS);
+  showToast('🚀',`Post published! <strong>+20 XP earned</strong>`);
+}
+
+// ── FILTERS ──
+function filterFeed(type, el) {
+  document.querySelectorAll('.sl-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  if(type==='all') { renderPosts(POSTS); return; }
+  renderPosts(POSTS.filter(p=>p.type===type));
+}
+
+function filterSubject(subj, el) {
+  document.querySelectorAll('.sl-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  renderPosts(POSTS.filter(p=>p.subject===subj));
+}
+
+function setFilter(f, el) {
+  document.querySelectorAll('.ff-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  let sorted = [...POSTS];
+  if(f==='hot') sorted.sort((a,b)=>b.votes-a.votes);
+  else if(f==='unanswered') sorted = sorted.filter(p=>p.answers===0);
+  else if(f==='solved') sorted = sorted.filter(p=>p.solved);
+  renderPosts(sorted);
+}
+
+// ── SEARCH ──
+document.getElementById('searchInput').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  if(!q) { renderPosts(POSTS); return; }
+  renderPosts(POSTS.filter(p=>
+    p.title.toLowerCase().includes(q) ||
+    p.text.toLowerCase().includes(q) ||
+    p.subject.toLowerCase().includes(q) ||
+    p.tags.some(t=>t.includes(q))
+  ));
+});
+
+// ── LIGHTBOX ──
+function openLightbox(src) {
+  document.getElementById('lbImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeLightbox(); });
+
+// ── TOAST ──
+function showToast(icon, msg) {
+  const wrap = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<span class="toast-icon">${icon}</span><span>${msg}</span>`;
+  wrap.appendChild(t);
+  setTimeout(()=>{ t.classList.add('out'); setTimeout(()=>t.remove(),300); }, 3000);
+}
+
+// ── INIT ──
+renderPosts(POSTS);
+</script>
+</body>
+</html>
