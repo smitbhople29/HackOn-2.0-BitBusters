@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Studease – Quiz Arena</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="quiz-styles.css"/>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo"><img src="studease logo.jpeg" alt="Logo">
+    <span>Studease</span>
+  </div>
+  <div class="header-right">
+    <div class="xp-pill" onclick="openRanks()">⚡ <span id="total-xp">0</span> XP</div>
+    <div class="rank-pill" onclick="openRanks()" id="rank-pill" style="--rank-color:#9e9e9e">
+      <span class="rank-icon" id="header-rank-icon">🪨</span>
+      <span class="rank-name" id="header-rank-name">STONE</span>
+    </div>
+    <div class="streak-pill">🔥 <span id="streak">7</span> Day Streak</div>
+  </div>
+</header>
+
+<!-- LEVEL BAR -->
+<div class="level-bar-wrap">
+  <div class="level-card" id="level-card" style="--rank-color:#9e9e9e">
+    <div class="level-avatar" id="level-avatar">🪨</div>
+    <div class="level-info">
+      <div class="level-top-row">
+        <div class="level-title" id="level-title">STONE</div>
+        <div class="level-num-badge" id="level-num-badge">LVL 1</div>
+      </div>
+      <div class="level-xp-row">
+        <div class="level-xp-text" id="level-xp-text">0 / 100 XP</div>
+        <div class="level-xp-next" id="level-xp-next">100 XP to next rank</div>
+      </div>
+      <div class="xp-bar-bg">
+        <div class="xp-bar-fill" id="xp-bar-fill" style="width:0%"></div>
+      </div>
+      <div class="next-rank-hint" id="next-rank-hint">
+        <span>Next:</span> <em id="next-rank-name">⚔️ IRON</em>
+      </div>
+    </div>
+    <div class="level-stats">
+      <div class="level-stat-item">Quizzes: <span id="stat-quizzes">0</span></div>
+      <div class="level-stat-item">Best Streak: <span id="stat-streak">0</span></div>
+      <div class="level-stat-item">Accuracy: <span id="stat-accuracy">—</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">📚 Assessment Centre</div>
+  <h1>QUIZ <em>ARENA</em></h1>
+  <p>Choose a subject, earn XP, level up your rank, and dominate the leaderboard.</p>
+</div>
+
+<!-- SUBJECT SELECTION -->
+<div class="section-label">— Select Your Subject —</div>
+<div class="subjects-grid">
+
+  <div class="subject-card" data-subject="english" onclick="pickDifficulty('english')">
+    <span class="subject-xp-reward">+50~200 XP</span>
+    <span class="subject-icon">📖</span>
+    <div class="subject-name">English</div>
+    <div class="subject-desc">Grammar, comprehension, vocabulary, and literary analysis.</div>
+    <div class="subject-meta">
+      <span class="subject-level">3 Difficulties</span>
+      <span class="subject-questions">10 Questions</span>
+    </div>
+  </div>
+
+  <div class="subject-card" data-subject="mathematics" onclick="pickDifficulty('mathematics')">
+    <span class="subject-xp-reward">+50~200 XP</span>
+    <span class="subject-icon">🔢</span>
+    <div class="subject-name">Mathematics</div>
+    <div class="subject-desc">Algebra, geometry, arithmetic, and problem solving.</div>
+    <div class="subject-meta">
+      <span class="subject-level">3 Difficulties</span>
+      <span class="subject-questions">10 Questions</span>
+    </div>
+  </div>
+
+  <div class="subject-card" data-subject="chemistry" onclick="pickDifficulty('chemistry')">
+    <span class="subject-xp-reward">+50~200 XP</span>
+    <span class="subject-icon">⚗️</span>
+    <div class="subject-name">Chemistry</div>
+    <div class="subject-desc">Periodic table, reactions, bonding, and organic chemistry.</div>
+    <div class="subject-meta">
+      <span class="subject-level">3 Difficulties</span>
+      <span class="subject-questions">10 Questions</span>
+    </div>
+  </div>
+
+  <div class="subject-card" data-subject="physics" onclick="pickDifficulty('physics')">
+    <span class="subject-xp-reward">+50~200 XP</span>
+    <span class="subject-icon">⚡</span>
+    <div class="subject-name">Physics</div>
+    <div class="subject-desc">Motion, energy, waves, electricity, and forces.</div>
+    <div class="subject-meta">
+      <span class="subject-level">3 Difficulties</span>
+      <span class="subject-questions">10 Questions</span>
+    </div>
+  </div>
+
+  <div class="subject-card" data-subject="social" onclick="pickDifficulty('social')">
+    <span class="subject-xp-reward">+50~200 XP</span>
+    <span class="subject-icon">🌍</span>
+    <div class="subject-name">Social Studies</div>
+    <div class="subject-desc">History, civics, geography, and world cultures.</div>
+    <div class="subject-meta">
+      <span class="subject-level">3 Difficulties</span>
+      <span class="subject-questions">10 Questions</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- DIFFICULTY MODAL -->
+<div class="diff-modal" id="diff-modal" onclick="handleDiffOverlay(event)">
+  <div class="diff-panel">
+    <button class="diff-panel-close" onclick="closeDiffModal()">✕</button>
+    <div class="diff-subject-header">
+      <div class="diff-subject-icon" id="diff-subj-icon">📖</div>
+      <div class="diff-subject-name" id="diff-subj-name">ENGLISH</div>
+    </div>
+    <div class="diff-subtitle">// choose your difficulty</div>
+    <div class="diff-cards">
+      <div class="diff-card easy" onclick="startQuiz(pendingSubject,'easy')">
+        <div class="diff-card-icon">🟢</div>
+        <div class="diff-card-info">
+          <div class="diff-card-name">EASY</div>
+          <div class="diff-card-desc">Foundational concepts. 30s per question. Great for beginners.</div>
+        </div>
+        <div class="diff-card-right">
+          <span class="diff-card-xp">+5 XP / Q</span>
+          <div class="diff-card-timer">⏱ 30s</div>
+        </div>
+      </div>
+      <div class="diff-card medium" onclick="startQuiz(pendingSubject,'medium')">
+        <div class="diff-card-icon">🟡</div>
+        <div class="diff-card-info">
+          <div class="diff-card-name">INTERMEDIATE</div>
+          <div class="diff-card-desc">Applied knowledge. 20s per question. The balanced challenge.</div>
+        </div>
+        <div class="diff-card-right">
+          <span class="diff-card-xp">+10 XP / Q</span>
+          <div class="diff-card-timer">⏱ 20s</div>
+        </div>
+      </div>
+      <div class="diff-card hard" onclick="startQuiz(pendingSubject,'hard')">
+        <div class="diff-card-icon">🔴</div>
+        <div class="diff-card-info">
+          <div class="diff-card-name">HARD</div>
+          <div class="diff-card-desc">Advanced problems. 15s per question. Only for the bold.</div>
+        </div>
+        <div class="diff-card-right">
+          <span class="diff-card-xp">+20 XP / Q</span>
+          <div class="diff-card-timer">⏱ 15s</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RANKS MODAL -->
+<div class="ranks-modal" id="ranks-modal" onclick="handleRanksOverlay(event)">
+  <div class="ranks-panel">
+    <h2>🏆 RANK SYSTEM</h2>
+    <div class="ranks-sub">// earn XP to climb the ranks</div>
+    <div id="ranks-list"></div>
+    <button class="close-ranks" onclick="closeRanks()">Close</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="quiz-panel" id="quiz-panel">
+
+    <div class="quiz-header">
+      <div class="quiz-subject-badge" id="quiz-subject-badge">SUBJECT</div>
+      <div class="quiz-diff-badge" id="quiz-diff-badge" style="--diff-col:#30d158">EASY</div>
+      <div class="quiz-title" id="quiz-title">Loading...</div>
+      <button class="quiz-close" onclick="closeQuiz()">✕</button>
+    </div>
+
+    <div class="quiz-progress-bar">
+      <div class="quiz-progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+
+    <div class="quiz-timer-row">
+      <div class="quiz-q-counter" id="q-counter">Question 1 / 10</div>
+      <div class="quiz-timer" id="quiz-timer">⏱ 20s</div>
+      <div class="quiz-score-live" id="live-score">Score: 0</div>
+    </div>
+
+    <!-- Streak row -->
+    <div class="quiz-streak-row">
+      <span class="streak-fire">🔥</span>
+      <span class="streak-label-quiz">Answer Streak:</span>
+      <div class="streak-dots" id="streak-dots"></div>
+      <span style="font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-left:auto;" id="combo-label"></span>
+    </div>
+
+    <div class="quiz-body" id="quiz-body" style="position:relative">
+      <div class="xp-multiplier" id="xp-multiplier">⚡ ×1 XP</div>
+      <div class="question-text" id="question-text"></div>
+      <div class="options-grid" id="options-grid"></div>
+      <div class="explanation-box" id="explanation-box">
+        <strong>💡 Explanation</strong><br/>
+        <span id="explanation-text"></span>
+      </div>
+    </div>
+
+    <div class="quiz-footer">
+      <div class="quiz-footer-left" id="footer-xp-preview"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQuestion()">Next →</button>
+    </div>
+
+    <div class="results-screen" id="results-screen">
+      <div class="results-emoji" id="results-emoji">🎉</div>
+      <div class="results-title" id="results-title">GREAT JOB!</div>
+      <div class="results-subtitle" id="results-subtitle"></div>
+
+      <!-- XP Gain Panel -->
+      <div class="xp-gain-panel">
+        <div class="xp-gain-big" id="xp-gain-big">+0</div>
+        <div class="xp-gain-details">
+          <div class="xp-gain-title">XP Earned</div>
+          <div class="xp-gain-breakdown" id="xp-breakdown"></div>
+        </div>
+      </div>
+
+      <!-- Level Up Panel -->
+      <div class="level-up-panel" id="level-up-panel">
+        <div class="level-up-icon" id="lu-icon">🎊</div>
+        <div class="level-up-text">
+          <strong id="lu-title">RANK UP!</strong>
+          <span id="lu-desc">You've reached a new rank!</span>
+        </div>
+      </div>
+
+      <div class="results-score-ring">
+        <div class="results-score-num" id="results-score-num">0</div>
+        <div class="results-score-label">OUT OF 10</div>
+      </div>
+      <div class="results-stats">
+        <div class="result-stat">
+          <div class="result-stat-num" id="res-correct" style="color:var(--correct)">0</div>
+          <div class="result-stat-label">Correct</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-num" id="res-wrong" style="color:var(--wrong)">0</div>
+          <div class="result-stat-label">Wrong</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-num" id="res-time" style="color:var(--accent-eng)">0s</div>
+          <div class="result-stat-label">Avg Time</div>
+        </div>
+      </div>
+      <div class="badge-earned" id="badge-earned">
+        <div class="badge-icon" id="badge-icon">🏅</div>
+        <div>
+          <div class="badge-title" id="badge-title">Badge Unlocked!</div>
+          <div class="badge-desc" id="badge-desc"></div>
+        </div>
+      </div>
+      <div class="results-buttons">
+        <button class="btn-retry" onclick="retryQuiz()">🔁 Try Again</button>
+        <button class="btn-back" onclick="closeQuiz()">← Back to Subjects</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- XP Toast -->
+<div class="xp-toast" id="xp-toast">
+  <span id="xp-toast-text">⚡ +10 XP</span>
+  <span class="xp-toast-combo" id="xp-toast-combo"></span>
+</div>
+
+<script>
+// ─── RANK SYSTEM ────────────────────────────────────────────────────────────
+const RANKS = [
+  { name: 'STONE',    icon: '🪨', color: '#9e9e9e', min: 0,    max: 99   },
+  { name: 'IRON',     icon: '⚔️', color: '#b0bec5', min: 100,  max: 249  },
+  { name: 'BRONZE',   icon: '🥉', color: '#cd7f32', min: 250,  max: 499  },
+  { name: 'SILVER',   icon: '🥈', color: '#c0c0c0', min: 500,  max: 899  },
+  { name: 'GOLD',     icon: '🥇', color: '#ffd700', min: 900,  max: 1499 },
+  { name: 'PLATINUM', icon: '💎', color: '#00e5ff', min: 1500, max: 2499 },
+  { name: 'DIAMOND',  icon: '💠', color: '#bf5af2', min: 2500, max: 4999 },
+  { name: 'MASTER',   icon: '👑', color: '#ff6b35', min: 5000, max: 9999 },
+  { name: 'LEGEND',   icon: '🌟', color: '#a8ff3e', min: 10000,max: Infinity },
+];
+function getRank(xp) {
+  for (let i = RANKS.length - 1; i >= 0; i--) {
+    if (xp >= RANKS[i].min) return { ...RANKS[i], index: i };
+  }
+  return { ...RANKS[0], index: 0 };
+}
+
+// ─── DIFFICULTY CONFIG ───────────────────────────────────────────────────────
+const DIFF_CONFIG = {
+  easy:   { label: 'EASY',         color: '#30d158', timer: 30, xpPer: 5,  icon: '🟢', bonusMulti: 1   },
+  medium: { label: 'INTERMEDIATE', color: '#ffd60a', timer: 20, xpPer: 10, icon: '🟡', bonusMulti: 1.5 },
+  hard:   { label: 'HARD',         color: '#ff453a', timer: 15, xpPer: 20, icon: '🔴', bonusMulti: 2   },
+};
+
+// ─── PLAYER STATE ────────────────────────────────────────────────────────────
+let totalXP = 0;
+let quizzesPlayed = 0;
+let totalCorrect = 0;
+let totalAnswered = 0;
+let bestAnswerStreak = 0;
+
+// ─── QUIZ STATE ──────────────────────────────────────────────────────────────
+let currentSubject = null;
+let currentDifficulty = 'medium';
+let pendingSubject = null;
+let currentQ = 0;
+let score = 0;
+let answered = false;
+let timerInterval = null;
+let timeLeft = 20;
+let answerStreak = 0;
+let questionTimes = [];
+let qStartTime = null;
+let prevRankIndex = 0;
+
+// ─── QUIZ DATA ───────────────────────────────────────────────────────────────
+const quizData = {
+  english: {
+    label: 'ENGLISH', color: 'var(--accent-eng)', icon: '📖',
+    easy: [
+      { q: "Which word is a noun?", opts: ["Run", "Happy", "Cat", "Quickly"], ans: 2, exp: "A noun is a person, place, or thing. 'Cat' is a thing — it's a noun." },
+      { q: "What punctuation ends a question?", opts: [".", "!", "?", ","], ans: 2, exp: "Questions always end with a question mark (?)." },
+      { q: "Which is the correct spelling?", opts: ["Recieve", "Receive", "Receve", "Receeve"], ans: 1, exp: "'Receive' follows the rule: 'i before e, except after c'." },
+      { q: "What is the opposite of 'happy'?", opts: ["Glad", "Joyful", "Sad", "Excited"], ans: 2, exp: "An antonym is the opposite of a word. The opposite of 'happy' is 'sad'." },
+      { q: "Which word is a verb?", opts: ["Table", "Blue", "Swim", "Fast"], ans: 2, exp: "Verbs are action or state words. 'Swim' is an action — it's a verb." },
+      { q: "How many vowels are in the alphabet?", opts: ["4", "5", "6", "7"], ans: 1, exp: "There are 5 vowels: A, E, I, O, U." },
+      { q: "Which sentence is correct?", opts: ["She don't like apples.", "She doesn't like apples.", "She not like apples.", "She likes not apples."], ans: 1, exp: "'Doesn't' (does not) is the correct contraction to use with singular subjects like 'she'." },
+      { q: "What is a synonym for 'big'?", opts: ["Tiny", "Small", "Large", "Thin"], ans: 2, exp: "A synonym is a word with the same meaning. 'Large' means the same as 'big'." },
+      { q: "What type of word is 'quickly'?", opts: ["Noun", "Adjective", "Verb", "Adverb"], ans: 3, exp: "Adverbs modify verbs and often end in '-ly'. 'Quickly' describes how something is done." },
+      { q: "Which is a complete sentence?", opts: ["Running fast.", "She runs fast.", "In the park.", "Very quickly now."], ans: 1, exp: "A complete sentence needs a subject and a verb. 'She runs fast' has both." },
+    ],
+    medium: [
+      { q: "Which sentence uses the correct form of 'their/there/they're'?", opts: ["Their going to the store.", "There car is blue.", "They're excited about the trip.", "Their is nothing to do."], ans: 2, exp: "'They're' is a contraction of 'they are'. 'Their' shows possession, 'there' refers to a place." },
+      { q: "What is the plural form of 'criterion'?", opts: ["Criterions", "Criteria", "Criterias", "Criteries"], ans: 1, exp: "'Criteria' is the correct plural — from its Greek origin." },
+      { q: "Which literary device is in: 'The wind whispered through the trees'?", opts: ["Metaphor", "Simile", "Personification", "Hyperbole"], ans: 2, exp: "Personification gives human qualities to non-human things. Wind can't whisper." },
+      { q: "Choose the correctly punctuated sentence:", opts: ["Its a beautiful day.", "It's a beautiful day.", "Its' a beautiful day.", "It is' a beautiful day."], ans: 1, exp: "'It's' with an apostrophe is the contraction for 'it is'." },
+      { q: "What is a synonym for 'ephemeral'?", opts: ["Permanent", "Transient", "Enormous", "Fragrant"], ans: 1, exp: "'Ephemeral' means short-lived. 'Transient' is its closest synonym." },
+      { q: "In Romeo and Juliet, 'What's in a name?' is an example of:", opts: ["A soliloquy", "A sonnet", "An aside", "A monologue"], ans: 0, exp: "A soliloquy is when a character speaks their thoughts aloud to the audience." },
+      { q: "Which sentence is in passive voice?", opts: ["The dog chased the cat.", "She completed the assignment.", "The assignment was completed by her.", "He runs every morning."], ans: 2, exp: "Passive voice: subject receives the action. 'Assignment' (subject) 'was completed' (passive)." },
+      { q: "What does the prefix 'anti-' mean?", opts: ["Before", "Against", "Under", "Over"], ans: 1, exp: "'Anti-' means against or opposing, e.g. 'antibiotic'." },
+      { q: "Which is a compound sentence?", opts: ["She ran fast.", "Although she was tired, she kept going.", "She ran fast, and he walked slowly.", "Running is fun."], ans: 2, exp: "A compound sentence joins two independent clauses with a coordinating conjunction." },
+      { q: "A story told using 'I' is written in:", opts: ["Third person", "Second person", "First person", "Omniscient"], ans: 2, exp: "First-person narrative uses 'I' and 'me'." },
+    ],
+    hard: [
+      { q: "Which sentence correctly uses a semicolon?", opts: ["I love reading; and writing.", "She went home; because it was late.", "He studied hard; he passed the exam.", "They were tired; but happy."], ans: 2, exp: "Semicolons join two independent, closely related clauses. Both parts must be full sentences." },
+      { q: "What is an 'anachronism' in literature?", opts: ["A character who appears in two stories", "Something placed in the wrong time period", "A narrator who is unreliable", "A repeated symbol"], ans: 1, exp: "An anachronism is an element placed in a historical context where it doesn't belong." },
+      { q: "Identify the mood in: 'If I were rich, I would travel the world.'", opts: ["Indicative", "Imperative", "Subjunctive", "Interrogative"], ans: 2, exp: "The subjunctive mood expresses hypothetical or wished-for situations using 'were' instead of 'was'." },
+      { q: "Which best defines 'verisimilitude'?", opts: ["Excessive repetition in writing", "The appearance of being true or real", "A verse with 14 lines", "Using words that sound like their meaning"], ans: 1, exp: "Verisimilitude refers to how real or believable a work of fiction appears to be." },
+      { q: "What literary technique does Shakespeare use in: 'All the world's a stage'?", opts: ["Simile", "Alliteration", "Extended metaphor", "Onomatopoeia"], ans: 2, exp: "This is an extended metaphor — comparing life to a stage throughout an entire speech." },
+      { q: "In grammar, what is a 'dangling modifier'?", opts: ["A modifier with no clear subject to describe", "An adjective used as a noun", "A clause modifying another clause", "A verb used as a noun"], ans: 0, exp: "A dangling modifier has no clear or logical word in the sentence to describe." },
+      { q: "Which rhetorical device is used in: 'I have a dream' (repeated)?", opts: ["Alliteration", "Anaphora", "Chiasmus", "Synecdoche"], ans: 1, exp: "Anaphora is the repetition of a phrase at the beginning of successive clauses for effect." },
+      { q: "What is the difference between a metaphor and a simile?", opts: ["Metaphors use 'like' or 'as'; similes don't", "Similes use 'like' or 'as'; metaphors don't", "There is no difference", "Metaphors only compare people"], ans: 1, exp: "Similes use 'like' or 'as' to compare. Metaphors state a direct comparison without those words." },
+      { q: "The term 'in medias res' refers to:", opts: ["A tragic ending", "Starting a story in the middle of the action", "A flashback technique", "A three-act structure"], ans: 1, exp: "'In medias res' is Latin for 'in the middle of things' — starting the story mid-action." },
+      { q: "Which word contains a suffix meaning 'full of'?", opts: ["Unkind", "Helpful", "Rewrite", "Dislike"], ans: 1, exp: "The suffix '-ful' means 'full of'. 'Helpful' = full of help." },
+    ]
+  },
+  mathematics: {
+    label: 'MATHEMATICS', color: 'var(--accent-math)', icon: '🔢',
+    easy: [
+      { q: "What is 12 × 8?", opts: ["86", "96", "94", "106"], ans: 1, exp: "12 × 8 = 96. You can calculate: 10×8=80 plus 2×8=16. 80+16=96." },
+      { q: "What is 144 ÷ 12?", opts: ["10", "11", "12", "13"], ans: 2, exp: "144 ÷ 12 = 12, because 12 × 12 = 144." },
+      { q: "What fraction is equivalent to 0.5?", opts: ["1/4", "1/3", "1/2", "2/3"], ans: 2, exp: "0.5 = 5/10 = 1/2. Dividing numerator and denominator by 5 gives ½." },
+      { q: "What is the perimeter of a square with side 6 cm?", opts: ["12 cm", "18 cm", "24 cm", "36 cm"], ans: 2, exp: "Perimeter of square = 4 × side = 4 × 6 = 24 cm." },
+      { q: "What is 25% of 80?", opts: ["15", "20", "25", "30"], ans: 1, exp: "25% = 1/4. So 80 ÷ 4 = 20." },
+      { q: "Round 3.467 to 1 decimal place:", opts: ["3.4", "3.5", "3.6", "3.47"], ans: 1, exp: "The digit after the first decimal is 6 (≥5), so we round up: 3.5." },
+      { q: "What is the next number in the sequence: 2, 4, 8, 16, __?", opts: ["24", "28", "32", "36"], ans: 2, exp: "Each number doubles. 16 × 2 = 32." },
+      { q: "What is 3² + 4²?", opts: ["14", "25", "49", "7"], ans: 1, exp: "3² = 9, 4² = 16. 9 + 16 = 25." },
+      { q: "How many degrees are in a right angle?", opts: ["45°", "90°", "180°", "360°"], ans: 1, exp: "A right angle is exactly 90°." },
+      { q: "What is the value of x if 2x = 14?", opts: ["5", "6", "7", "8"], ans: 2, exp: "Divide both sides by 2: x = 14 ÷ 2 = 7." },
+    ],
+    medium: [
+      { q: "Solve: 3x + 7 = 22. What is x?", opts: ["3", "4", "5", "6"], ans: 2, exp: "3x = 22 - 7 = 15, so x = 5." },
+      { q: "Area of a circle with radius 7? (π ≈ 3.14)", opts: ["43.96", "153.86", "21.98", "49"], ans: 1, exp: "Area = πr² = 3.14 × 49 = 153.86." },
+      { q: "What is √144?", opts: ["11", "12", "13", "14"], ans: 1, exp: "√144 = 12 because 12 × 12 = 144." },
+      { q: "Triangle angles: 60° and 80°. Third angle?", opts: ["30°", "40°", "50°", "60°"], ans: 1, exp: "180 - 60 - 80 = 40°." },
+      { q: "Simplify: 2⁵ ÷ 2²", opts: ["2²", "2³", "2⁴", "2⁷"], ans: 1, exp: "2⁵ ÷ 2² = 2³ = 8." },
+      { q: "What is 15% of 200?", opts: ["20", "25", "30", "35"], ans: 2, exp: "0.15 × 200 = 30." },
+      { q: "Slope through (2,4) and (6,12):", opts: ["1", "2", "3", "4"], ans: 1, exp: "(12−4)/(6−2) = 8/4 = 2." },
+      { q: "Which is a prime number?", opts: ["21", "27", "37", "49"], ans: 2, exp: "37 is prime. Others: 21=3×7, 27=3³, 49=7²." },
+      { q: "LCM of 4 and 6?", opts: ["8", "10", "12", "24"], ans: 2, exp: "LCM(4,6) = 12." },
+      { q: "Expand: (x + 3)²", opts: ["x² + 9", "x² + 3x + 9", "x² + 6x + 9", "x² + 6x + 6"], ans: 2, exp: "(x+3)² = x² + 6x + 9." },
+    ],
+    hard: [
+      { q: "If f(x) = 2x² - 3x + 1, what is f(3)?", opts: ["8", "10", "12", "16"], ans: 1, exp: "f(3) = 2(9) - 3(3) + 1 = 18 - 9 + 1 = 10." },
+      { q: "Solve: log₂(32) = ?", opts: ["4", "5", "6", "8"], ans: 1, exp: "log₂(32) = 5 because 2⁵ = 32." },
+      { q: "What is the sum of the interior angles of a hexagon?", opts: ["540°", "620°", "720°", "900°"], ans: 2, exp: "Sum = (n−2) × 180 = (6−2) × 180 = 4 × 180 = 720°." },
+      { q: "Simplify: (3x²y)(4xy³)", opts: ["7x²y³", "12x³y⁴", "12x²y³", "7x³y⁴"], ans: 1, exp: "Multiply coefficients: 3×4=12. Add exponents: x^(2+1)=x³, y^(1+3)=y⁴. Answer: 12x³y⁴." },
+      { q: "What is the discriminant of x² - 5x + 6 = 0?", opts: ["1", "4", "13", "25"], ans: 0, exp: "Discriminant = b² - 4ac = 25 - 24 = 1." },
+      { q: "A circle has circumference 31.4 cm. What is its radius? (π ≈ 3.14)", opts: ["3 cm", "4 cm", "5 cm", "6 cm"], ans: 2, exp: "C = 2πr → r = C/(2π) = 31.4/(6.28) = 5 cm." },
+      { q: "What is the value of sin(90°)?", opts: ["0", "0.5", "1", "√2/2"], ans: 2, exp: "sin(90°) = 1. At 90°, the opposite side equals the hypotenuse." },
+      { q: "Solve the system: x + y = 10, x - y = 4. What is x?", opts: ["5", "6", "7", "8"], ans: 2, exp: "Adding: 2x = 14, x = 7. Then y = 10 - 7 = 3." },
+      { q: "The nth term of an AP is 3n + 2. What is the 10th term?", opts: ["28", "30", "32", "35"], ans: 2, exp: "3(10) + 2 = 30 + 2 = 32." },
+      { q: "If P(A) = 0.4 and P(B) = 0.3 (independent), find P(A and B):", opts: ["0.7", "0.1", "0.12", "0.34"], ans: 2, exp: "For independent events: P(A∩B) = P(A) × P(B) = 0.4 × 0.3 = 0.12." },
+    ]
+  },
+  chemistry: {
+    label: 'CHEMISTRY', color: 'var(--accent-chem)', icon: '⚗️',
+    easy: [
+      { q: "What is the chemical symbol for water?", opts: ["WO", "H₂O", "W₂H", "HO₂"], ans: 1, exp: "Water is H₂O — two hydrogen atoms and one oxygen atom." },
+      { q: "What is the most abundant gas in the Earth's atmosphere?", opts: ["Oxygen", "Carbon dioxide", "Nitrogen", "Argon"], ans: 2, exp: "Nitrogen makes up about 78% of Earth's atmosphere." },
+      { q: "What do we call a substance that tastes sour and has a low pH?", opts: ["Base", "Salt", "Acid", "Alkali"], ans: 2, exp: "Acids taste sour and have pH below 7 (e.g. lemon juice, vinegar)." },
+      { q: "How many elements are on the periodic table?", opts: ["100", "108", "118", "126"], ans: 2, exp: "There are currently 118 confirmed elements on the periodic table." },
+      { q: "What is the symbol for Gold?", opts: ["Go", "Gd", "Au", "Ag"], ans: 2, exp: "'Au' comes from the Latin word 'Aurum'." },
+      { q: "What happens when you mix baking soda and vinegar?", opts: ["Nothing", "It turns red", "It fizzes and bubbles", "It catches fire"], ans: 2, exp: "They react to produce CO₂ gas — hence the fizzing and bubbling." },
+      { q: "At what temperature does water boil (°C)?", opts: ["90°C", "95°C", "100°C", "110°C"], ans: 2, exp: "Water boils at 100°C (212°F) at sea level/standard pressure." },
+      { q: "What is the smallest particle of an element?", opts: ["Molecule", "Compound", "Atom", "Cell"], ans: 2, exp: "An atom is the smallest unit of an element that retains its chemical properties." },
+      { q: "Which state of matter takes the shape of its container but has fixed volume?", opts: ["Solid", "Liquid", "Gas", "Plasma"], ans: 1, exp: "Liquids flow and take the container's shape, but their volume stays fixed." },
+      { q: "What colour does litmus paper turn in an acid?", opts: ["Blue", "Green", "Red", "Yellow"], ans: 2, exp: "Litmus paper turns red in acid and blue in alkali." },
+    ],
+    medium: [
+      { q: "Chemical symbol for Gold?", opts: ["Go", "Gd", "Au", "Ag"], ans: 2, exp: "Gold's symbol 'Au' comes from 'Aurum'." },
+      { q: "How many electrons does Carbon have?", opts: ["4", "6", "8", "12"], ans: 1, exp: "Carbon: atomic number 6, so 6 electrons." },
+      { q: "Bond formed when electrons are shared?", opts: ["Ionic", "Covalent", "Metallic", "Hydrogen"], ans: 1, exp: "Covalent bonds form when atoms share electrons." },
+      { q: "pH of neutral solution at 25°C?", opts: ["0", "5", "7", "14"], ans: 2, exp: "pH 7 = neutral. Below 7 = acidic; above 7 = alkaline." },
+      { q: "Formula for water?", opts: ["H₂O₂", "HO", "H₂O", "H₃O"], ans: 2, exp: "Water = H₂O. H₂O₂ is hydrogen peroxide." },
+      { q: "Definite shape and volume: which state?", opts: ["Gas", "Liquid", "Solid", "Plasma"], ans: 2, exp: "Solids have fixed shape and volume." },
+      { q: "Atomic number of Oxygen?", opts: ["6", "8", "16", "18"], ans: 1, exp: "Oxygen has atomic number 8." },
+      { q: "Example of a chemical change:", opts: ["Melting ice", "Cutting paper", "Burning wood", "Dissolving sugar"], ans: 2, exp: "Burning wood creates new substances — irreversible chemical change." },
+      { q: "Noble gases are in which group?", opts: ["Group 1", "Group 7", "Group 17", "Group 18"], ans: 3, exp: "Noble gases are in Group 18." },
+      { q: "Acid + Base →?", opts: ["An oxide", "Water only", "Salt and water", "A gas"], ans: 2, exp: "Neutralization: Acid + Base → Salt + Water." },
+    ],
+    hard: [
+      { q: "What is the electron configuration of Sodium (Na)?", opts: ["2,8,1", "2,8,2", "2,6,1", "2,7,1"], ans: 0, exp: "Sodium (Z=11) has configuration 2,8,1 — filling shells K, L, M." },
+      { q: "Which hybridisation is present in ethene (C₂H₄)?", opts: ["sp", "sp²", "sp³", "sp³d"], ans: 1, exp: "Ethene has sp² hybridisation — each carbon forms a double bond with a sigma and pi component." },
+      { q: "What is the IUPAC name for CH₃CH₂OH?", opts: ["Methanol", "Ethanol", "Propanol", "Butanol"], ans: 1, exp: "CH₃CH₂OH has 2 carbons — the IUPAC name is ethanol." },
+      { q: "In electrolysis, which electrode attracts cations?", opts: ["Anode", "Cathode", "Both", "Neither"], ans: 1, exp: "Cations (positive ions) migrate to the cathode (negative electrode)." },
+      { q: "What is the oxidation state of Mn in KMnO₄?", opts: ["+5", "+6", "+7", "+8"], ans: 2, exp: "K is +1, each O is −2. So: 1 + Mn + 4(−2) = 0 → Mn = +7." },
+      { q: "Which type of isomerism exists between ethanol and dimethyl ether?", opts: ["Chain", "Position", "Functional group", "Optical"], ans: 2, exp: "They have the same molecular formula (C₂H₆O) but different functional groups — functional group isomers." },
+      { q: "What does Le Chatelier's principle state?", opts: ["Reactions always reach equilibrium", "Equilibrium shifts to oppose a change in conditions", "Temperature has no effect on equilibrium", "Catalysts shift equilibrium"], ans: 1, exp: "Le Chatelier's: if a stress is applied to equilibrium, the system shifts to counteract it." },
+      { q: "Which gas is produced at the anode when dilute H₂SO₄ is electrolysed?", opts: ["Hydrogen", "Oxygen", "Sulphur dioxide", "Water vapour"], ans: 1, exp: "At the anode, OH⁻ ions are oxidised, releasing oxygen gas." },
+      { q: "What is the empirical formula of a compound with 40%C, 6.7%H, 53.3%O?", opts: ["CH₂O", "C₂H₄O₂", "CH₃O", "C₂H₂O"], ans: 0, exp: "Divide by atomic mass: C=40/12≈3.3, H=6.7/1≈6.7, O=53.3/16≈3.3. Ratio 1:2:1 → CH₂O." },
+      { q: "What type of reaction is: CH₄ + 2O₂ → CO₂ + 2H₂O?", opts: ["Decomposition", "Displacement", "Combustion", "Neutralization"], ans: 2, exp: "A fuel reacting with oxygen to produce CO₂ and H₂O is a combustion reaction." },
+    ]
+  },
+  physics: {
+    label: 'PHYSICS', color: 'var(--accent-phys)', icon: '⚡',
+    easy: [
+      { q: "What unit is used to measure temperature?", opts: ["Metres", "Kilogram", "Celsius", "Ampere"], ans: 2, exp: "Temperature is commonly measured in Celsius (°C) or Kelvin (K)." },
+      { q: "What force pulls objects towards the Earth?", opts: ["Magnetism", "Friction", "Gravity", "Tension"], ans: 2, exp: "Gravity is the force that pulls all objects with mass towards each other." },
+      { q: "What is the unit of speed?", opts: ["kg", "m/s", "Joule", "Newton"], ans: 1, exp: "Speed is measured in metres per second (m/s)." },
+      { q: "What type of energy does a moving car have?", opts: ["Potential", "Chemical", "Kinetic", "Nuclear"], ans: 2, exp: "Any moving object has kinetic energy — energy due to motion." },
+      { q: "What does a thermometer measure?", opts: ["Pressure", "Volume", "Mass", "Temperature"], ans: 3, exp: "A thermometer is used to measure temperature." },
+      { q: "Which of these is a source of light?", opts: ["Mirror", "Window", "Sun", "Book"], ans: 2, exp: "The Sun is a natural source of light. Mirrors and windows only reflect or transmit light." },
+      { q: "What happens to sound in a vacuum?", opts: ["It travels faster", "It travels slower", "It cannot travel", "It gets louder"], ans: 2, exp: "Sound is a mechanical wave and needs a medium (solid/liquid/gas) to travel. No medium = no sound." },
+      { q: "What is the SI unit of mass?", opts: ["Gram", "Pound", "Kilogram", "Newton"], ans: 2, exp: "The kilogram (kg) is the SI (international standard) unit of mass." },
+      { q: "Which colour of light has the longest wavelength?", opts: ["Violet", "Green", "Blue", "Red"], ans: 3, exp: "In the visible spectrum, red has the longest wavelength (~700 nm) and violet has the shortest." },
+      { q: "What is the formula for speed?", opts: ["Speed = distance + time", "Speed = distance × time", "Speed = distance ÷ time", "Speed = time ÷ distance"], ans: 2, exp: "Speed = Distance ÷ Time. For example: 100m in 10s = 10 m/s." },
+    ],
+    medium: [
+      { q: "SI unit of force?", opts: ["Joule", "Watt", "Newton", "Pascal"], ans: 2, exp: "The Newton (N) is the SI unit of force. 1 N = 1 kg·m/s²." },
+      { q: "Newton's 2nd Law: Force equals?", opts: ["mass × velocity", "mass × acceleration", "weight × height", "speed × time"], ans: 1, exp: "F = ma." },
+      { q: "Speed of light in vacuum?", opts: ["3×10⁶ m/s", "3×10⁸ m/s", "3×10¹⁰ m/s", "3×10⁴ m/s"], ans: 1, exp: "c ≈ 3×10⁸ m/s." },
+      { q: "Wave that requires a medium?", opts: ["Light", "X-rays", "Sound", "Gamma rays"], ans: 2, exp: "Sound is mechanical — needs a medium to propagate." },
+      { q: "Resistance if wire length is doubled?", opts: ["Halved", "Same", "Doubled", "Quadrupled"], ans: 2, exp: "R = ρL/A — doubling L doubles R." },
+      { q: "Energy conservation law says energy is:", opts: ["Created but not destroyed", "Destroyed but not created", "Neither created nor destroyed", "Both created and destroyed"], ans: 2, exp: "Energy is only converted from one form to another." },
+      { q: "Unit of electric current?", opts: ["Volt", "Ohm", "Ampere", "Watt"], ans: 2, exp: "Current is measured in Amperes (A)." },
+      { q: "Strongest gravitational pull:", opts: ["Earth", "Mars", "Saturn", "Jupiter"], ans: 3, exp: "Jupiter is largest with ~2.5× Earth's surface gravity." },
+      { q: "Formula for kinetic energy?", opts: ["mgh", "½mv²", "mv", "Fd"], ans: 1, exp: "KE = ½mv²." },
+      { q: "Light from air to glass:", opts: ["Speeds up", "Slows down", "Stops", "Changes colour"], ans: 1, exp: "Light slows in denser media — causing refraction." },
+    ],
+    hard: [
+      { q: "A 2 kg mass is moving at 4 m/s. What is its kinetic energy?", opts: ["8 J", "16 J", "32 J", "64 J"], ans: 1, exp: "KE = ½mv² = ½ × 2 × 16 = 16 J." },
+      { q: "What is the equivalent resistance of two 6Ω resistors in parallel?", opts: ["12 Ω", "6 Ω", "4 Ω", "3 Ω"], ans: 3, exp: "1/R = 1/6 + 1/6 = 2/6, so R = 3 Ω." },
+      { q: "A wave has frequency 500 Hz and speed 340 m/s. Wavelength?", opts: ["0.34 m", "0.68 m", "1.7 m", "170 m"], ans: 1, exp: "λ = v/f = 340/500 = 0.68 m." },
+      { q: "What is the work done moving 5 kg by 3 m against gravity (g=10)?", opts: ["15 J", "50 J", "150 J", "500 J"], ans: 2, exp: "W = mgh = 5 × 10 × 3 = 150 J." },
+      { q: "Which law relates pressure and volume of a gas at constant temp?", opts: ["Charles' Law", "Boyle's Law", "Newton's Law", "Ohm's Law"], ans: 1, exp: "Boyle's Law: P₁V₁ = P₂V₂ at constant temperature." },
+      { q: "An object is dropped from rest. After 3s, its velocity is: (g=10m/s²)", opts: ["10 m/s", "20 m/s", "30 m/s", "40 m/s"], ans: 2, exp: "v = u + at = 0 + 10×3 = 30 m/s." },
+      { q: "What is the critical angle for total internal reflection?", opts: ["The angle at which refraction stops", "The angle where all light is absorbed", "The minimum angle for total internal reflection", "The Brewster angle"], ans: 2, exp: "The critical angle is the minimum angle of incidence beyond which total internal reflection occurs." },
+      { q: "In a transformer, Vp/Vs = Np/Ns. If Np=200, Ns=400, Vp=100V, find Vs:", opts: ["50 V", "100 V", "200 V", "400 V"], ans: 2, exp: "Vs = Vp × (Ns/Np) = 100 × (400/200) = 200 V." },
+      { q: "What is the momentum of a 3 kg object at 6 m/s?", opts: ["9 kg·m/s", "12 kg·m/s", "18 kg·m/s", "24 kg·m/s"], ans: 2, exp: "p = mv = 3 × 6 = 18 kg·m/s." },
+      { q: "Which principle explains why planes can fly?", opts: ["Newton's 3rd Law only", "Bernoulli's principle and Newton's 3rd law", "Boyle's Law", "Archimedes' Principle"], ans: 1, exp: "Lift is generated by Bernoulli's principle (pressure difference) and Newton's 3rd Law (reaction to downwash)." },
+    ]
+  },
+  social: {
+    label: 'SOCIAL STUDIES', color: 'var(--accent-soc)', icon: '🌍',
+    easy: [
+      { q: "What is the capital city of France?", opts: ["Berlin", "London", "Paris", "Rome"], ans: 2, exp: "Paris is the capital and largest city of France." },
+      { q: "On which continent is Brazil located?", opts: ["Africa", "Asia", "Europe", "South America"], ans: 3, exp: "Brazil is the largest country in South America." },
+      { q: "What ocean lies between Europe and North America?", opts: ["Pacific", "Indian", "Atlantic", "Arctic"], ans: 2, exp: "The Atlantic Ocean separates Europe and North America." },
+      { q: "Which planet do we live on?", opts: ["Mars", "Venus", "Earth", "Jupiter"], ans: 2, exp: "We live on Earth — the third planet from the Sun." },
+      { q: "Who was the first President of the United States?", opts: ["Abraham Lincoln", "Thomas Jefferson", "George Washington", "John Adams"], ans: 2, exp: "George Washington was the 1st President of the USA (1789–1797)." },
+      { q: "What is the largest country in the world by area?", opts: ["China", "USA", "Canada", "Russia"], ans: 3, exp: "Russia is the world's largest country by area — about 17.1 million km²." },
+      { q: "What language is spoken in Brazil?", opts: ["Spanish", "Portuguese", "French", "English"], ans: 1, exp: "Portuguese is the official language of Brazil." },
+      { q: "What is a map?", opts: ["A story about places", "A drawing of the Earth's surface", "A list of countries", "A globe"], ans: 1, exp: "A map is a flat drawing or representation of a geographic area." },
+      { q: "How many continents are there on Earth?", opts: ["5", "6", "7", "8"], ans: 2, exp: "There are 7 continents: Africa, Antarctica, Asia, Australia, Europe, North America, South America." },
+      { q: "What is the name of the document that lists citizen rights in the USA?", opts: ["The Magna Carta", "The Declaration", "The Bill of Rights", "The Constitution"], ans: 2, exp: "The Bill of Rights is the first 10 amendments to the US Constitution, protecting citizens' rights." },
+    ],
+    medium: [
+      { q: "Largest continent by area?", opts: ["Africa", "North America", "Asia", "Europe"], ans: 2, exp: "Asia covers ~44.5 million km²." },
+      { q: "Which document declared US independence?", opts: ["The Constitution", "The Bill of Rights", "The Magna Carta", "The Declaration of Independence"], ans: 3, exp: "Adopted July 4, 1776." },
+      { q: "UN founded in which year?", opts: ["1919", "1939", "1945", "1955"], ans: 2, exp: "October 24, 1945." },
+      { q: "Capital of Australia?", opts: ["Sydney", "Melbourne", "Canberra", "Perth"], ans: 2, exp: "Canberra — purpose-built as a compromise." },
+      { q: "Longest river in the world?", opts: ["Amazon", "Nile", "Mississippi", "Yangtze"], ans: 1, exp: "The Nile (~6,650 km)." },
+      { q: "System based on private ownership and free markets?", opts: ["Communism", "Capitalism", "Socialism", "Feudalism"], ans: 1, exp: "Capitalism: private ownership + free market." },
+      { q: "Renaissance began in which country?", opts: ["France", "England", "Italy", "Germany"], ans: 2, exp: "Italy, 14th century." },
+      { q: "Process by which citizens elect leaders?", opts: ["Referendum", "Democracy", "Voting / Elections", "Lobbying"], ans: 2, exp: "Elections — fundamental to democracy." },
+      { q: "Which is a primary source?", opts: ["A textbook", "A documentary", "A diary from the period", "An encyclopedia"], ans: 2, exp: "Primary sources are original documents from the time period." },
+      { q: "Movement of people from rural to urban areas?", opts: ["Emigration", "Immigration", "Urbanisation", "Globalisation"], ans: 2, exp: "Urbanisation — the shift to city living." },
+    ],
+    hard: [
+      { q: "Which event triggered World War I?", opts: ["The invasion of Poland", "The assassination of Archduke Franz Ferdinand", "The sinking of the Lusitania", "The fall of the Ottoman Empire"], ans: 1, exp: "The assassination of Austro-Hungarian heir Franz Ferdinand in Sarajevo in 1914 sparked WWI." },
+      { q: "What was the main economic policy of John Maynard Keynes?", opts: ["Reduce government spending during recessions", "Increase government spending to stimulate the economy", "Remove all taxes", "Allow markets to self-correct without intervention"], ans: 1, exp: "Keynesian economics advocates government spending and intervention to boost demand during downturns." },
+      { q: "Which ancient civilization built the Machu Picchu complex?", opts: ["Aztec", "Maya", "Inca", "Olmec"], ans: 2, exp: "Machu Picchu was built by the Inca Empire in Peru in the 15th century." },
+      { q: "What does 'veto power' mean in the UN Security Council?", opts: ["The ability to vote twice", "A permanent member can block a resolution", "The right to call emergency meetings", "The power to expel members"], ans: 1, exp: "The 5 permanent members (P5) each hold veto power — they can block any substantive resolution." },
+      { q: "The Berlin Wall fell in which year?", opts: ["1985", "1987", "1989", "1991"], ans: 2, exp: "The Berlin Wall fell on November 9, 1989, symbolizing the end of the Cold War." },
+      { q: "What is Gross Domestic Product (GDP)?", opts: ["Total government debt of a country", "Total value of goods and services produced in a country", "A country's total exports minus imports", "The average income per citizen"], ans: 1, exp: "GDP is the total monetary value of all goods and services produced in a country in a given period." },
+      { q: "Which treaty ended World War I?", opts: ["Treaty of Paris", "Treaty of Versailles", "Treaty of Vienna", "Treaty of Utrecht"], ans: 1, exp: "The Treaty of Versailles (1919) officially ended WWI and imposed heavy terms on Germany." },
+      { q: "What is the 'Silk Road'?", opts: ["A road in China made of silk tiles", "A modern highway connecting Europe and Asia", "Ancient trade routes connecting East Asia to the Mediterranean", "A maritime route used by Portuguese explorers"], ans: 2, exp: "The Silk Road was a network of ancient trade routes used to exchange goods and culture across Eurasia." },
+      { q: "What is the term for a government controlled by a small group of elite people?", opts: ["Democracy", "Oligarchy", "Theocracy", "Monarchy"], ans: 1, exp: "Oligarchy is a system where power is concentrated in a small, privileged group." },
+      { q: "Which event is known as the start of the Great Depression?", opts: ["The outbreak of World War II", "The stock market crash of 1929", "The Dust Bowl of 1930", "The banking crisis of 1932"], ans: 1, exp: "The Wall Street Crash of October 1929 (Black Tuesday) triggered the Great Depression." },
+    ]
+  }
+};
+
+// ─── RANK UI ─────────────────────────────────────────────────────────────────
+function updateRankUI() {
+  const rank = getRank(totalXP);
+  const nextRank = RANKS[rank.index + 1];
+  const xpInRank = totalXP - rank.min;
+  const xpNeeded = nextRank ? rank.max - rank.min + 1 : 1;
+  const pct = nextRank ? Math.min(100, (xpInRank / xpNeeded) * 100) : 100;
+
+  const card = document.getElementById('level-card');
+  card.style.setProperty('--rank-color', rank.color);
+  document.getElementById('level-avatar').textContent = rank.icon;
+  document.getElementById('level-title').textContent = rank.name;
+  document.getElementById('level-num-badge').textContent = `LVL ${rank.index + 1}`;
+  document.getElementById('level-xp-text').textContent = `${totalXP} / ${nextRank ? rank.max + 1 : '∞'} XP`;
+  document.getElementById('level-xp-next').textContent = nextRank ? `${rank.max + 1 - totalXP} XP to next` : 'MAX RANK';
+  document.getElementById('xp-bar-fill').style.width = pct + '%';
+  document.getElementById('xp-bar-fill').style.background = `linear-gradient(90deg, ${rank.color}, ${rank.color}cc)`;
+
+  if (nextRank) {
+    document.getElementById('next-rank-hint').style.display = 'flex';
+    document.getElementById('next-rank-name').textContent = `${nextRank.icon} ${nextRank.name}`;
+  } else {
+    document.getElementById('next-rank-hint').style.display = 'none';
+  }
+
+  document.getElementById('rank-pill').style.setProperty('--rank-color', rank.color);
+  document.getElementById('header-rank-icon').textContent = rank.icon;
+  document.getElementById('header-rank-name').textContent = rank.name;
+  document.getElementById('total-xp').textContent = totalXP;
+  document.getElementById('stat-quizzes').textContent = quizzesPlayed;
+  document.getElementById('stat-streak').textContent = bestAnswerStreak;
+  document.getElementById('stat-accuracy').textContent = totalAnswered > 0
+    ? Math.round((totalCorrect / totalAnswered) * 100) + '%' : '—';
+}
+
+function buildRanksList() {
+  const current = getRank(totalXP);
+  const list = document.getElementById('ranks-list');
+  list.innerHTML = '';
+  RANKS.forEach((r, i) => {
+    const row = document.createElement('div');
+    row.className = 'rank-row' + (i === current.index ? ' current-rank' : '');
+    row.style.setProperty('--row-col', r.color);
+    const isUnlocked = totalXP >= r.min;
+    const isCurrent = i === current.index;
+    row.innerHTML = `
+      <div class="rank-row-icon">${r.icon}</div>
+      <div class="rank-row-info">
+        <div class="rank-row-name" style="color:${r.color}">${r.name}</div>
+        <div class="rank-row-range">${r.min} – ${r.max === Infinity ? '∞' : r.max} XP</div>
+      </div>
+      <div class="rank-row-xp" style="color:${isUnlocked ? r.color : 'var(--muted)'}">${isUnlocked ? (isCurrent ? '● CURRENT' : '✓ UNLOCKED') : `${r.min} XP`}</div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function openRanks() { buildRanksList(); document.getElementById('ranks-modal').classList.add('open'); }
+function closeRanks() { document.getElementById('ranks-modal').classList.remove('open'); }
+function handleRanksOverlay(e) { if (e.target === document.getElementById('ranks-modal')) closeRanks(); }
+
+// ─── DIFFICULTY PICKER ───────────────────────────────────────────────────────
+function pickDifficulty(subject) {
+  pendingSubject = subject;
+  const data = quizData[subject];
+  document.getElementById('diff-subj-icon').textContent = data.icon;
+  document.getElementById('diff-subj-name').textContent = data.label;
+  // Wire up buttons with current subject directly
+  document.querySelectorAll('.diff-card').forEach(card => {
+    const diff = card.classList.contains('easy') ? 'easy' : card.classList.contains('medium') ? 'medium' : 'hard';
+    card.onclick = () => startQuiz(subject, diff);
+  });
+  document.getElementById('diff-modal').classList.add('open');
+}
+function closeDiffModal() { document.getElementById('diff-modal').classList.remove('open'); }
+function handleDiffOverlay(e) { if (e.target === document.getElementById('diff-modal')) closeDiffModal(); }
+
+// ─── STREAK DOTS ─────────────────────────────────────────────────────────────
+function renderStreakDots(streak) {
+  const container = document.getElementById('streak-dots');
+  container.innerHTML = '';
+  for (let i = 0; i < 5; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'streak-dot' + (i < streak ? ' lit' : '');
+    dot.textContent = i < streak ? '🔥' : '';
+    container.appendChild(dot);
+  }
+  const comboLabel = document.getElementById('combo-label');
+  if (streak >= 5) comboLabel.textContent = '🔥 MAX COMBO! ×3 XP';
+  else if (streak >= 3) comboLabel.textContent = '⚡ HOT STREAK! ×2 XP';
+  else comboLabel.textContent = '';
+}
+
+function getMultiplier(streak) {
+  if (streak >= 5) return 3;
+  if (streak >= 3) return 2;
+  return 1;
+}
+
+function updateMultiplierBadge(streak) {
+  const m = getMultiplier(streak);
+  const dc = DIFF_CONFIG[currentDifficulty];
+  const el = document.getElementById('xp-multiplier');
+  el.textContent = `⚡ ×${m} XP`;
+  el.style.color = m >= 3 ? '#ff6b35' : m === 2 ? '#ffd60a' : 'var(--muted)';
+  el.style.borderColor = m >= 3 ? '#ff6b35' : m === 2 ? '#ffd60a' : 'var(--border)';
+  el.style.background = m >= 2
+    ? `color-mix(in srgb, ${m >= 3 ? '#ff6b35' : '#ffd60a'} 12%, transparent)`
+    : 'transparent';
+}
+
+function createConfetti() {
+  for (let i = 0; i < 50; i++) {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random() * 100 + 'vw';
+    confetti.style.animationDelay = Math.random() * 3 + 's';
+    confetti.style.background = ['var(--correct)', 'var(--accent-eng)', 'var(--accent-math)', 'var(--accent-chem)', 'var(--accent-phys)'][Math.floor(Math.random() * 5)];
+    document.body.appendChild(confetti);
+    setTimeout(() => confetti.remove(), 3000);
+  }
+}
+
+// ─── START QUIZ ──────────────────────────────────────────────────────────────
+function startQuiz(subject, difficulty) {
+  closeDiffModal();
+  currentSubject = subject;
+  currentDifficulty = difficulty;
+  currentQ = 0;
+  score = 0;
+  answered = false;
+  answerStreak = 0;
+  questionTimes = [];
+  prevRankIndex = getRank(totalXP).index;
+
+  const data = quizData[subject];
+  const diff = DIFF_CONFIG[difficulty];
+  const panel = document.getElementById('quiz-panel');
+  panel.style.setProperty('--active-col', data.color);
+  document.getElementById('quiz-subject-badge').textContent = data.label;
+  document.getElementById('quiz-subject-badge').style.setProperty('--active-col', data.color);
+
+  // Difficulty badge
+  const diffBadge = document.getElementById('quiz-diff-badge');
+  diffBadge.textContent = diff.icon + ' ' + diff.label;
+  diffBadge.style.setProperty('--diff-col', diff.color);
+
+  document.getElementById('results-screen').classList.remove('show');
+  document.getElementById('quiz-body').style.display = 'block';
+  document.querySelector('.quiz-footer').style.display = 'flex';
+  document.querySelector('.quiz-timer-row').style.display = 'flex';
+  document.querySelector('.quiz-streak-row').style.display = 'flex';
+  document.querySelector('.quiz-progress-bar').style.display = 'block';
+
+  renderStreakDots(0);
+  updateMultiplierBadge(0);
+  document.getElementById('modal-overlay').classList.add('open');
+  loadQuestion();
+}
+
+function loadQuestion() {
+  const data = quizData[currentSubject];
+  const questions = data[currentDifficulty];
+  const q = questions[currentQ];
+  const diff = DIFF_CONFIG[currentDifficulty];
+  answered = false;
+  qStartTime = Date.now();
+
+  document.getElementById('q-counter').textContent = `Question ${currentQ+1} / ${questions.length}`;
+  document.getElementById('progress-fill').style.width = `${(currentQ / questions.length) * 100}%`;
+  document.getElementById('live-score').textContent = `Score: ${score}`;
+  document.getElementById('quiz-title').textContent = `${data.label} QUIZ`;
+  document.getElementById('question-text').textContent = q.q;
+  document.getElementById('footer-xp-preview').textContent = `⚡ ${diff.xpPer * getMultiplier(answerStreak)} XP per correct`;
+
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  const keys = ['A','B','C','D'];
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-key">${keys[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i, btn);
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('explanation-box').classList.remove('show');
+  document.getElementById('btn-next').classList.remove('show');
+  startTimer(diff.timer);
+}
+
+function startTimer(seconds) {
+  clearInterval(timerInterval);
+  timeLeft = seconds;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) { clearInterval(timerInterval); if (!answered) timeUp(); }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const el = document.getElementById('quiz-timer');
+  el.textContent = `⏱ ${timeLeft}s`;
+  el.classList.toggle('danger', timeLeft <= 5);
+}
+
+function timeUp() {
+  answered = true;
+  answerStreak = 0;
+  const elapsed = (Date.now() - qStartTime) / 1000;
+  questionTimes.push(elapsed);
+  totalAnswered++;
+  const q = quizData[currentSubject][currentDifficulty][currentQ];
+  const btns = document.querySelectorAll('.option-btn');
+  btns[q.ans].classList.add('correct');
+  btns.forEach(b => b.disabled = true);
+  renderStreakDots(0);
+  updateMultiplierBadge(0);
+  showExplanation(q.exp);
+  document.getElementById('btn-next').classList.add('show');
+  document.getElementById('footer-xp-preview').textContent = `⏰ Time's up!`;
+}
+
+function selectAnswer(index, btn) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+
+  const elapsed = (Date.now() - qStartTime) / 1000;
+  questionTimes.push(elapsed);
+  totalAnswered++;
+
+  const q = quizData[currentSubject][currentDifficulty][currentQ];
+  const diff = DIFF_CONFIG[currentDifficulty];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+
+  const correct = index === q.ans;
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  if (!correct) btns[q.ans].classList.add('correct');
+
+  if (correct) {
+    score++;
+    totalCorrect++;
+    answerStreak++;
+    if (answerStreak > bestAnswerStreak) bestAnswerStreak = answerStreak;
+    const mult = getMultiplier(answerStreak);
+    const xpGained = diff.xpPer * mult;
+    totalXP += xpGained;
+    updateRankUI();
+    showXPToast(xpGained, answerStreak, mult);
+    createConfetti(); // Add confetti effect
+  } else {
+    answerStreak = 0;
+  }
+
+  renderStreakDots(Math.min(answerStreak, 5));
+  updateMultiplierBadge(answerStreak);
+  document.getElementById('live-score').textContent = `Score: ${score}`;
+  document.getElementById('footer-xp-preview').textContent = `⚡ ${diff.xpPer * getMultiplier(answerStreak)} XP per correct`;
+  showExplanation(q.exp);
+  document.getElementById('btn-next').classList.add('show');
+}
+
+function showExplanation(text) {
+  document.getElementById('explanation-text').textContent = text;
+  document.getElementById('explanation-box').classList.add('show');
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= quizData[currentSubject][currentDifficulty].length) {
+    showResults();
+  } else {
+    loadQuestion();
+  }
+}
+
+// ─── RESULTS ─────────────────────────────────────────────────────────────────
+function showResults() {
+  clearInterval(timerInterval);
+  quizzesPlayed++;
+  const total = quizData[currentSubject][currentDifficulty].length;
+  const pct = Math.round((score / total) * 100);
+  const diff = DIFF_CONFIG[currentDifficulty];
+  const baseXP = score * diff.xpPer;
+
+  let bonusXP = 0;
+  if (pct === 100) bonusXP = Math.round(50 * diff.bonusMulti);
+  else if (pct >= 80) bonusXP = Math.round(20 * diff.bonusMulti);
+  else if (pct >= 60) bonusXP = Math.round(10 * diff.bonusMulti);
+  if (bonusXP > 0) totalXP += bonusXP;
+
+  const sessionXP = baseXP + bonusXP;
+  const avgTime = questionTimes.length ? Math.round(questionTimes.reduce((a,b)=>a+b,0)/questionTimes.length) : 0;
+
+  updateRankUI();
+
+  document.getElementById('quiz-body').style.display = 'none';
+  document.querySelector('.quiz-footer').style.display = 'none';
+  document.querySelector('.quiz-timer-row').style.display = 'none';
+  document.querySelector('.quiz-streak-row').style.display = 'none';
+  document.getElementById('progress-fill').style.width = '100%';
+
+  document.getElementById('results-score-num').textContent = score;
+  document.getElementById('res-correct').textContent = score;
+  document.getElementById('res-wrong').textContent = total - score;
+  document.getElementById('res-time').textContent = avgTime + 's';
+
+  document.getElementById('xp-gain-big').textContent = `+${sessionXP}`;
+  let breakdown = `Base: <span>${baseXP} XP</span>`;
+  if (bonusXP > 0) breakdown += `  ·  Bonus: <span>+${bonusXP} XP</span>`;
+  if (bestAnswerStreak >= 3) breakdown += `  ·  Best combo: <span>×${getMultiplier(bestAnswerStreak)}</span>`;
+  breakdown += `  ·  ${diff.icon} <span>${diff.label}</span>`;
+  document.getElementById('xp-breakdown').innerHTML = breakdown;
+
+  const newRankIndex = getRank(totalXP).index;
+  const levelUpPanel = document.getElementById('level-up-panel');
+  if (newRankIndex > prevRankIndex) {
+    const newRank = RANKS[newRankIndex];
+    levelUpPanel.classList.add('show');
+    levelUpPanel.style.setProperty('--rank-color', newRank.color);
+    document.getElementById('lu-icon').textContent = newRank.icon;
+    document.getElementById('lu-title').textContent = `RANK UP → ${newRank.name}!`;
+    document.getElementById('lu-desc').textContent = `You've reached ${newRank.name} rank! Keep going.`;
+    launchConfetti();
+  } else {
+    levelUpPanel.classList.remove('show');
+  }
+
+  let emoji, title, subtitle, badgeIcon, badgeName, badgeDesc;
+  if (pct === 100) {
+    emoji='🏆'; title='PERFECT!'; subtitle=`Flawless on ${diff.label}! Incredible.`;
+    badgeIcon='🌟'; badgeName='Perfect Score Badge'; badgeDesc=`10/10 on ${diff.label} ${quizData[currentSubject].label}`;
+  } else if (pct >= 70) {
+    emoji='🎉'; title='GREAT JOB!'; subtitle='Solid performance! Keep pushing to reach perfection.';
+    badgeIcon='🥇'; badgeName='High Achiever Badge'; badgeDesc=`${score}/10 on ${diff.label} ${quizData[currentSubject].label}`;
+  } else if (pct >= 40) {
+    emoji='💪'; title='KEEP GOING!'; subtitle='Good effort! Review the explanations and try again.';
+    badgeIcon='📚'; badgeName='Learning Badge'; badgeDesc=`Attempted ${diff.label} ${quizData[currentSubject].label}`;
+  } else {
+    emoji='🔥'; title='NEVER GIVE UP!'; subtitle='Every expert was once a beginner. Study and retry!';
+    badgeIcon='🌱'; badgeName='Perseverance Badge'; badgeDesc=`Keep trying ${diff.label} ${quizData[currentSubject].label}!`;
+  }
+
+  document.getElementById('results-emoji').textContent = emoji;
+  document.getElementById('results-title').textContent = title;
+  document.getElementById('results-subtitle').textContent = subtitle;
+  document.getElementById('badge-icon').textContent = badgeIcon;
+  document.getElementById('badge-title').textContent = badgeName;
+  document.getElementById('badge-desc').textContent = badgeDesc;
+  document.getElementById('results-screen').classList.add('show');
+
+  if (pct >= 70 && newRankIndex <= prevRankIndex) launchConfetti();
+}
+
+function launchConfetti() {
+  const colors = ['#00e5ff','#ff6b35','#a8ff3e','#bf5af2','#ffd60a','#ff453a','#30d158'];
+  for (let i = 0; i < 60; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.cssText = `left:${Math.random()*100}vw;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*0.5}s;transform:rotate(${Math.random()*360}deg)`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 3500);
+    }, i * 30);
+  }
+}
+
+function showXPToast(xp, streak, mult) {
+  const toast = document.getElementById('xp-toast');
+  document.getElementById('xp-toast-text').textContent = `⚡ +${xp} XP`;
+  const combo = document.getElementById('xp-toast-combo');
+  if (mult > 1) combo.textContent = `×${mult} combo!`;
+  else combo.textContent = '';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+function retryQuiz() { startQuiz(currentSubject, currentDifficulty); }
+
+function closeQuiz() {
+  clearInterval(timerInterval);
+  document.getElementById('modal-overlay').classList.remove('open');
+  currentSubject = null;
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeQuiz();
+}
+
+// Init
+updateRankUI();
+</script>
+</body>
+</html>
