@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studease - Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #070a12;
+            --bg-2: #0f1221;
+            --surface: rgba(255, 255, 255, 0.06);
+            --surface-strong: rgba(255, 255, 255, 0.12);
+            --text: #e8eef9;
+            --muted: rgba(232, 238, 249, 0.7);
+            --accent: #6c5ce7;
+            --accent-2: #00d8ff;
+            --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, rgba(108, 92, 231, 0.35), transparent 45%),
+                        linear-gradient(135deg, var(--bg), var(--bg-2));
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        .user-icon {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            display: grid;
+            place-items: center;
+            font-size: 22px;
+            cursor: pointer;
+            transition: transform 0.25s ease, background 0.25s ease;
+            z-index: 1100;
+        }
+
+        .user-icon:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.13);
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            padding: 32px 24px;
+            background: rgba(10, 12, 22, 0.95);
+            backdrop-filter: blur(12px);
+            transform: translateX(-320px);
+            box-shadow: 12px 0 35px rgba(0, 0, 0, 0.45);
+            transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 1050;
+        }
+
+        nav.active {
+            transform: translateX(0);
+        }
+
+        nav h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            margin-bottom: 24px;
+            color: var(--text);
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li + li {
+            margin-top: 16px;
+        }
+
+        nav ul li a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--muted);
+            font-weight: 500;
+            transition: background 0.25s, color 0.25s;
+        }
+
+        nav ul li a:hover {
+            background: rgba(108, 92, 231, 0.25);
+            color: var(--text);
+        }
+
+        nav .streak {
+            margin-top: 44px;
+            padding: 18px 16px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .streak .label {
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            color: rgba(232, 238, 249, 0.6);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .streak .value {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1020;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        main {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 120px 24px 80px;
+            display: grid;
+            gap: 36px;
+        }
+
+        .hero {
+            display: grid;
+            gap: 18px;
+            text-align: center;
+            padding: 40px 30px 46px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: var(--shadow);
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(2.2rem, 4vw, 3.2rem);
+            letter-spacing: -0.02em;
+            color: var(--text);
+        }
+
+        .hero p {
+            margin: 0;
+            max-width: 680px;
+            margin-left: auto;
+            margin-right: auto;
+            color: var(--muted);
+            line-height: 1.65;
+        }
+
+        .hero .actions {
+            display: inline-flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            border-radius: 999px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #0b0d13;
+            box-shadow: 0 14px 30px rgba(108, 92, 231, 0.35);
+        }
+
+        .btn.secondary {
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--text);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 18px 40px rgba(108, 92, 231, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.12);
+        }
+
+        .btn.primary:hover {
+            background-position: 100% 0;
+            box-shadow: 0 20px 50px rgba(108, 92, 231, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.15);
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            padding: 22px 18px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card h3 {
+            margin: 0 0 12px;
+            font-size: 1.3rem;
+            color: var(--text);
+        }
+
+        .card p {
+            margin: 0 0 18px;
+            color: rgba(232, 238, 249, 0.7);
+            line-height: 1.55;
+        }
+
+        .card .tag {
+            align-self: flex-start;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(108, 92, 231, 0.25);
+        }
+
+        @media (max-width: 640px) {
+            nav {
+                width: 100%;
+                max-width: 320px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="user-icon" title="Menu" onclick="toggleNav()">☰</div>
+    <nav id="nav-menu" aria-label="Main navigation">
+        <h2>Studease</h2>
+        <ul>
+            <li><a href="#dashboard">📊 Dashboard</a></li>
+            <li><a href="#chatbot">🤖 Chatbot</a></li>
+            <li><a href="assessment.html">📝 Assessment</a></li>
+            <li><a href="http://127.0.0.1:5500/quiz%20page.html">🧠 Quiz</a></li>
+            <li><a href="#leaderboard">🏆 Leaderboard</a></li>
+            <li><a href="#community">👥 Community</a></li>
+        </ul>
+
+        <div class="streak">
+            <div class="label">Current streak</div>
+            <div class="value">🔥 7 days</div>
+        </div>
+    </nav>
+    <div class="overlay" id="overlay" onclick="toggleNav()"></div>
+    <main>
+        <section class="hero">
+            <h1>Welcome back to Studease</h1>
+            <p>Track your progress, challenge yourself every day, and connect with a community of learners. Studease keeps everything in one place so you can focus on what matters most: growing your skills.</p>
+            <div class="actions">
+                <a class="btn primary" href="#dashboard">Go to Dashboard</a>
+            </div>
+        </section>
+
+        <section class="cards">
+            <article class="card">
+                <h3>Daily Focus</h3>
+                <p>Set a goal for today and keep the momentum going. Every minute you spend learning builds toward your next streak.</p>
+                <span class="tag">Goal-driven</span>
+            </article>
+            <article class="card">
+                <h3>Smart Recommendations</h3>
+                <p>Studease suggests the best next step based on what you’ve already mastered. Personalized learning makes progress effortless.</p>
+                <span class="tag">Personalized</span>
+            </article>
+            <article class="card">
+                <h3>Community Challenges</h3>
+                <p>Join weekly challenges, compare your progress, and stay motivated by learning with others in our community.</p>
+                <span class="tag">Collaborative</span>
+            </article>
+        </section>
+    </main>
+
+    <script>
+        function toggleNav() {
+            const nav = document.getElementById('nav-menu');
+            const overlay = document.getElementById('overlay');
+            nav.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
